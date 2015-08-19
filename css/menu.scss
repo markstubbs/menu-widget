@@ -194,6 +194,7 @@ ul.menu-top {
 
         // First-level sub menus
         & > ul {
+            margin-top: 3px;
             margin-left: -12px; // Must match ul.menu-top > li padding above
             border-bottom-left-radius: 5px;
             border-bottom-right-radius: 5px;

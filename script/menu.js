@@ -256,7 +256,7 @@ function Menu(sId, oOptions)
                     _elCurrentActiveItem = elTouched;
                     _this.dispatchEvent('enter', elTouched.id);
                     if (!bHasSubMenu) {
-                        _this.dispatchEvent('click', elTouched.id);
+                        _this.dispatchEvent('select', elTouched.id);
                     }
                     _openSubMenu(e.target, 1);
                     if (!bHasSubMenu) {
@@ -267,7 +267,7 @@ function Menu(sId, oOptions)
                 } else {
                     // Top-level item is inactive
                     if (!bHasSubMenu) {
-                        _this.dispatchEvent('click', elTouched.id);
+                        _this.dispatchEvent('select', elTouched.id);
                     }
                     _clearAllMenus();
                 }
@@ -283,7 +283,7 @@ function Menu(sId, oOptions)
                         _setRadio(elTouched);
                     }
                     // This is an action item i.e. no sub-menu
-                    _this.dispatchEvent('click', elTouched.id);
+                    _this.dispatchEvent('select', elTouched.id);
                     _clearAllMenus();
                 }
             }
@@ -327,7 +327,7 @@ function Menu(sId, oOptions)
                     _elCurrentActiveItem = elClicked;
                     _this.dispatchEvent('enter', elClicked.id);
                     if (!bHasSubMenu) {
-                        _this.dispatchEvent('click', elClicked.id);
+                        _this.dispatchEvent('select', elClicked.id);
                     }
                     _openSubMenu(e.target, 1);
                     if (!bHasSubMenu) {
@@ -338,7 +338,7 @@ function Menu(sId, oOptions)
                 } else {
                     // Top-level item is inactive
                     if (!bHasSubMenu) {
-                        _this.dispatchEvent('click', elClicked.id);
+                        _this.dispatchEvent('select', elClicked.id);
                     }
                     _clearAllMenus();
                 }
@@ -353,7 +353,7 @@ function Menu(sId, oOptions)
                         _setRadio(elClicked);
                     }
                     // This is an action item i.e. no sub-menu
-                    _this.dispatchEvent('click', elClicked.id);
+                    _this.dispatchEvent('select', elClicked.id);
                     _clearAllMenus();
                 }
             }
@@ -1152,7 +1152,7 @@ function Menu(sId, oOptions)
                     _setRadio(elMenuItem);
                 }
                 elMenuItem.classList.add(_oOptions.prefix + '-active');
-                _this.dispatchEvent('click', elMenuItem.id);
+                _this.dispatchEvent('select', elMenuItem.id);
                 setTimeout(function() { elMenuItem.classList.remove(_oOptions.prefix + '-active'); }, _oOptions.menuActiveDuration);
                 e.stopPropagation();
                 e.preventDefault();
@@ -1274,7 +1274,7 @@ function Menu(sId, oOptions)
                         } else if (sRole === 'menuitemradio') {
                             _setRadio(_elCurrentActiveItem);
                         }
-                        _this.dispatchEvent('click', _elCurrentActiveItem.id);
+                        _this.dispatchEvent('select', _elCurrentActiveItem.id);
                         _clearAllMenus();
                     } else {
                         // Handle sub-menu items

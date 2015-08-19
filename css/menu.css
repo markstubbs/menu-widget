@@ -116,6 +116,7 @@ ul.menu-top {
       ul.menu-top > li.menu-align-right > ul {
         right: 0; }
     ul.menu-top > li > ul {
+      margin-top: 3px;
       margin-left: -12px;
       border-bottom-left-radius: 5px;
       border-bottom-right-radius: 5px;

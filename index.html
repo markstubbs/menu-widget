@@ -76,7 +76,7 @@
         }
 
         #menu-1-clicked:before, #menu-2-clicked:before {
-            content: 'last clicked';
+            content: 'last selected';
         }
 
         #menu-1-clicked, #menu-2-clicked {
@@ -238,10 +238,10 @@
 
     // Install event handlers
     var elMenu1Over = document.getElementById('menu-1-over');
-    var elMenu1Clicked = document.getElementById('menu-1-clicked');
-    oMenu1.addEventListener('click', function (e) {
-        elMenu1Clicked.textContent = e.detail;
-        console.log('Clicked', e.detail);
+    var elMenu1Selected = document.getElementById('menu-1-clicked');
+    oMenu1.addEventListener('select', function (e) {
+        elMenu1Selected.textContent = e.detail;
+        console.log('Selected', e.detail);
     });
 
     oMenu1.addEventListener('enter', function(e) {
@@ -362,10 +362,10 @@
 
     // Install event handlers
     var elMenu2Over = document.getElementById('menu-2-over');
-    var elMenu2Clicked = document.getElementById('menu-2-clicked');
-    oMenu2.addEventListener('click', function (e) {
-        elMenu2Clicked.textContent = e.detail;
-        console.log('Clicked', e.detail);
+    var elMenu2Selected = document.getElementById('menu-2-clicked');
+    oMenu2.addEventListener('select', function (e) {
+        elMenu2Selected.textContent = e.detail;
+        console.log('Selected', e.detail);
     });
 
     oMenu2.addEventListener('enter', function(e) {
