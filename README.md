@@ -60,7 +60,7 @@ To support IE8+ you'll need to prepend a few more:
 <script src="/script/polyfills/selectivizr.min.js"></script>
 ```
 
-#### Creating Your First Menu
+#### Creating Your First Static Menu
 
 The easiest way to create a static menu is to create a set of nested unordered lists.
 Here's an example that illustrates a number of features:
@@ -117,6 +117,11 @@ Here's an example that illustrates a number of features:
 </ul>
 ```
 
+To render the menu create a new Menu object in JavaScript passing the ID of the top-level `<ul>` like this:
+```javascript
+var menu = new Menu('menu');
+```
+
 which will be rendered like this (on a Mac):
 
 ![Menu sample 1](./screenshots/menu1.png)
@@ -128,3 +133,6 @@ Sub-menus are created by simply nesting `<ul>`s inside `<li>`s as shown in the e
 
 Menu item properties are specified using a combination of ARIA roles and HTML `data-*` attributes on the `<li>` tag.
 See the Reference section later for details.
+Separators are implicitly declared by creating an empty `<li>`.
+
+#### Identifying
