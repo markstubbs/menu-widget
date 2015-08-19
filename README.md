@@ -143,3 +143,6 @@ Shortcuts will be displayed according to the conventions of the target OS.
 * Separators are implicitly declared by creating an empty `<li>`.
 * Checkboxes are created by adding an ARIA attribute `role="menuitemcheckbox"`.
 * Radio button groups are created by adding an ARIA attribute `role="menuitemradio"`.
+* The Help menu has been right-aligned using a `data-align="right"` attribute.
+* You can specify IDs for each item widget in the HTML, but if you omit them (as in the example above) the widget will automatically generate them from the menu item's text.
+* Radio button groups can be identified by adding a `name` attribute to each member of the group in the usual way, but if you omit them the widget will automatically generate them.
