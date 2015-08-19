@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="ie8" lang="en"><![endif]-->
+<!--[if IE 9]><html class="ie9" lang="en"><![endif]-->
+<!--[if !IE]><!--><html lang="en"><!--<![endif]-->
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <title>Menu Demo</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/normalize.css">
+    <link rel="stylesheet" type="text/css" href="/css/menu.css">
+
+    <!--[if IE 8]>
+    <script src="/script/polyfills/console.min.js"></script>
+    <script src="/script/polyfills/ie8.min.js"></script>
+    <script src="/script/polyfills/trim.min.js"></script>
+    <script src="/script/polyfills/Object.keys.min.js"></script>
+    <script src="/script/polyfills/Array.filter.min.js"></script>
+    <script src="/script/polyfills/Array.indexOf.min.js"></script>
+    <script src="/script/polyfills/Array.isArray.min.js"></script>
+    <script src="/script/polyfills/Array.forEach.min.js"></script>
+    <script src="/script/polyfills/classlist.min.js"></script>
+    <script src="/script/jquery-1.11.3.min.js"></script>
+    <script src="/script/polyfills/selectivizr.min.js"></script>
+    <![endif]-->
+
+    <!--[if IE 9]>
+    <script src="/script/polyfills/console.min.js"></script>
+    <script src="/script/polyfills/classlist.min.js"></script>
+    <![endif]-->
+
+    <script src="/script/polyfills/Array.find.min.js"></script>
+    <script src="/script/utils.min.js"></script>
+    <script src="/script/platform.min.js"></script>
+    <script src="/script/menu.min.js"></script>
+
+    <style>
+        body {
+            padding: 10px !important;
+        }
+
+        ul.menu-top {
+            position: relative;
+            margin-top: 20px;
+        }
+
+        .menu-highlight {
+            color: dodgerblue;
+        }
+
+        #menu-1-over, #menu-2-over, #menu-1-clicked, #menu-2-clicked {
+            position: relative;
+            display: inline-block;
+            width: 210px;
+            height: 30px;
+            line-height: 30px;
+            padding: 0 5px;
+            font-size: 12px;
+        }
+
+        #menu-1-over, #menu-2-over {
+            color: #3062A5;
+            background-color: #BDDEF3;
+        }
+
+        #menu-1-over:before, #menu-2-over:before, #menu-1-clicked:before, #menu-2-clicked:before {
+            position: absolute;
+            top: -23px;
+            left: 0;
+            color: black;
+        }
+
+        #menu-1-over:before, #menu-2-over:before {
+            content: 'over';
+        }
+
+        #menu-1-clicked:before, #menu-2-clicked:before {
+            content: 'last clicked';
+        }
+
+        #menu-1-clicked, #menu-2-clicked {
+            color: #867228;
+            background-color: #f3eaab;
+        }
+
+    </style>
+
+</head>
+<body>
+
+<h3 id="page-heading">Menu widget demo</h3>
+
+<span id="menu-1-over">&nbsp;</span>
+<span id="menu-1-clicked">&nbsp;</span>
+
+<!-- Declarative menu-->
+<ul id="menu-bar-1" style="display:none">
+    <li>
+        menu1
+        <ul>
+            <li role="menuitemcheckbox" data-shortcut="c t" aria-checked="true">i am a checked checkbox</li>
+            <li role="menuitemcheckbox" data-shortcut="c u">i am another checkbox</li>
+            <li data-shortcut="s x" aria-disabled="true">i am disabled</li>
+            <li data-shortcut="x">i have a shortcut</li>
+            <li></li>
+            <li data-icon="class(fa-comment)">i have an icon</li>
+            <li data-icon="class(fa-cloud)" aria-disabled="true">i have an icon (disabled)</li>
+        </ul>
+    </li>
+    <li>
+        menu2
+        <ul>
+            <li>i am an action</li>
+            <li data-placeholder="nothing to see here">
+                i have a sub-menu
+                <ul>
+                    <li>
+                        action 1
+                        <ul>
+                            <li aria-disabled="true">action 1A</li>
+                            <li>action 1B</li>
+                        </ul>
+                    </li>
+                    <li>action 2</li>
+                    <li>
+                        action 3
+                        <ul>
+                            <li>action 3A</li>
+                            <li>action 3B</li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                i also have a sub-menu
+                <ul>
+                    <li>
+                        action a
+                        <ul>
+                            <li aria-disabled="true">action A1</li>
+                            <li>action A2</li>
+                        </ul>
+                    </li>
+                    <li>
+                        action b
+                        <ul>
+                            <li>action b1</li>
+                            <li>action b2</li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+            <li></li>
+            <li role="menuitemcheckbox" aria-checked="true">i am another checkbox</li>
+            <li role="menuitemcheckbox" data-shortcut="s t" aria-disabled="true" aria-checked="true">i am a disabled checkbox</li>
+            <li></li>
+            <li role="menuitemradio" aria-checked="true">radio button 1</li>
+            <li role="menuitemradio">radio button 2</li>
+            <li role="menuitemradio">radio button 3</li>
+            <li></li>
+            <li role="menuitemradio">radio button A</li>
+            <li role="menuitemradio">radio button B</li>
+            <li role="menuitemradio" aria-checked="true">radio button C</li>
+        </ul>
+    </li>
+    <li>
+        menu3 (empty)
+    </li>
+    <li aria-disabled="true">
+        menu4 (disabled)
+        <ul>
+            <li><span style="color:red">shouldn't see this</span></li>
+            <li><span style="color:red">or this!</span></li>
+        </ul>
+    </li>
+    <li data-align="right">
+        help
+        <ul>
+            <li data-icon="class(fa-info)">
+                Getting Started
+                <ul>
+                    <li>
+                        Menus
+                        <ul>
+                            <li>Opening a Menu</li>
+                            <li>Closing a Menu</li>
+                        </ul>
+                    </li>
+                    <li>Window Manager</li>
+                </ul>
+            </li>
+            <li></li>
+            <li data-shortcut="f1">About Test 1</li>
+        </ul>
+    </li>
+    <li>menu 6 (no submenu)</li>
+</ul>
+<p>This is content below a menu.</p>
+
+<div style="margin-top:150px">
+    <span id="menu-2-over">&nbsp;</span>
+    <span id="menu-2-clicked">&nbsp;</span>
+    <ul id="menu-bar-2" style="display:none"></ul>
+</div>
+
+<script>
+    // Test - missing menu ID
+    new Menu();
+    new Menu(null);
+    new Menu('');
+
+    // Test - specify unknown menu ID
+    new Menu('menu-bar-missing');
+
+    // Test - known element that's not a UL
+    new Menu('page-heading');
+
+    // Test - valid root menu
+    var oMenu1 = new Menu('menu-bar-1', {
+        tabindex: 1,
+        hotkey: { keycode: 77, modifiers: { c: true, a: false, m: false, s: false } } // Ctrl M
+    });
+
+    // Test - remove sub-menu items
+    oMenu1.clear('menu-item-action-1');
+    oMenu1.clear('menu-item-action-a', true);
+
+    // Test - replace sub-menu items
+    oMenu1.replace('menu-item-action-b', [
+        'Replaced Action B1',
+        {
+            text: 'Replaced Action B2',
+            icon: 'class(fa-database)',
+            items: []
+        }
+    ]);
+
+    // Install event handlers
+    var elMenu1Over = document.getElementById('menu-1-over');
+    var elMenu1Clicked = document.getElementById('menu-1-clicked');
+    oMenu1.addEventListener('click', function (e) {
+        elMenu1Clicked.textContent = e.detail;
+        console.log('Clicked', e.detail);
+    });
+
+    oMenu1.addEventListener('enter', function(e) {
+        elMenu1Over.textContent = e.detail;
+        console.log('Entered', e.detail);
+    });
+
+    oMenu1.addEventListener('leave', function(e) {
+        elMenu1Over.innerHTML = '&nbsp;';
+        console.log('Left', e.detail);
+    });
+
+    oMenu1.set('menu-item-menu3-empty', { text: 'Menu3' });
+    oMenu1.set('menu-item-i-am-a-toggle', { checked: false });
+    oMenu1.set('menu-item-i-am-a-disabled-toggle', { checked: true });
+
+    oMenu1.append('menu-item-menu3-empty', [
+        'menu3 - one',
+        'menu3 - two'
+    ]);
+    oMenu1.remove('menu-item-menu3-one');
+
+    // Test Menu API
+    var oMenu2 = new Menu('menu-bar-2', {
+        tabindex: 2,
+        hotkey: { keycode: 77, modifiers: { c: true, a: false, m: false, s: true } } // Ctrl + Shift M
+    });
+
+    oMenu2.insertBefore(null, [
+        {
+            text: 'Dynamic 1',
+            className: 'menu-highlight',
+            items: [
+                {
+                    text: 'Dynamic 1A',
+                    shortcut: 'c s a'
+                },
+                'Dynamic 1B',
+                '',
+                'Dynamic 1C'
+            ]
+        },
+        {
+            id: 'my-dynamic-menu2',
+            text: 'Dynamic 2',
+            items: [
+                'Dynamic 2A',
+                {
+                    text: 'Dynamic 2B',
+                    items: ['Dynamic 2B (One)','Dynamic 2B (Two)','Dynamic 2B (Three)'],
+                    icon: 'class(fa-vimeo)'
+                },
+                {
+                    text: 'Dynamic 2C (Disabled)',
+                    disabled: true
+                }
+            ]
+        },
+        {
+            text: 'Dynamic 3 (Disabled)',
+            disabled: true
+        },
+        {
+            text: 'Help',
+            align: 'right',
+            items: [{
+                text: 'About Test 2',
+                shortcut: 's f1'
+            }]
+        }
+    ]);
+
+    oMenu2.prepend('menu2-item-dynamic-1', [
+        'Prepended 1D',
+        {
+            text: 'Prepended 1E',
+            items: ['Prepended 1E (One)','Prepended 1E (Two)','Prepended 1E (Three)'],
+            icon: 'class(fa-coffee)'
+        },
+        ''
+    ]);
+    oMenu2.append('menu2-item-dynamic-1', [ 'Appended 1F', 'Appended 1G'] );
+    oMenu2.append('menu2-item-help', [
+        '',
+        'Appended 4A',
+        {
+            text: 'Appended 4B',
+            items: []
+        }
+    ] );
+    oMenu2.append('my-dynamic-menu2',
+        [
+            '',
+            {
+                text: 'check 1',
+                role: 'menuitemcheckbox'
+            },
+            {
+                text: 'check 2',
+                role: 'menuitemcheckbox'
+            },
+            '',
+            {
+                text: 'radio 1',
+                role: 'menuitemradio'
+            },
+            {
+                text: 'radio 2',
+                role: 'menuitemradio',
+                checked: true
+            },
+            {
+                text: 'radio 3',
+                role: 'menuitemradio'
+            }
+        ]
+    );
+
+    // Install event handlers
+    var elMenu2Over = document.getElementById('menu-2-over');
+    var elMenu2Clicked = document.getElementById('menu-2-clicked');
+    oMenu2.addEventListener('click', function (e) {
+        elMenu2Clicked.textContent = e.detail;
+        console.log('Clicked', e.detail);
+    });
+
+    oMenu2.addEventListener('enter', function(e) {
+        elMenu2Over.textContent = e.detail;
+        console.log('Entered', e.detail);
+    });
+
+    oMenu2.addEventListener('leave', function(e) {
+        elMenu2Over.innerHTML = '&nbsp;';
+        console.log('Left', e.detail);
+    });
+
+</script>
+</body>
+</html>

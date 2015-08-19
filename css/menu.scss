@@ -1,0 +1,274 @@
+
+@import 'mixins';
+
+ul.menu-top {
+    @include select(none);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100000;
+    box-sizing: border-box;
+    list-style: none;
+    cursor: default;
+    margin: 0;
+    padding: 0;
+    font-size: 15px;
+    line-height: 30px;
+    background-color: ghostwhite;
+    border-bottom: 1px solid grey;
+    -webkit-tap-highlight-color: transparent;
+
+    .menu-placeholder {
+        color: silver;
+        font-weight: normal;
+    }
+
+    &:focus {
+        outline: none;
+    }
+
+    &:after {
+        content: '';
+        display: table;
+        clear: both;
+    }
+
+    // All sub-menus
+    ul {
+        @include select(none);
+        list-style: none;
+        cursor: default;
+        position: absolute;
+        display: none;
+        z-index: 1;
+
+        color: black;
+        line-height: 15px;
+        padding: 3px 0 3px 0;
+        background-color: ghostwhite;
+
+        // Sub-menu items
+        li {
+            position: relative;
+            white-space: nowrap;
+
+            // Separators
+            &[role="separator"] {
+                padding: 0 !important;
+            }
+
+            // Icons and affordances
+            &:before, &:after {
+                display: inline-block;
+                position: absolute;
+            }
+
+            // Keyboard shortcuts
+            &[data-shortcut-display]:after {
+                content: attr(data-shortcut-display);
+            }
+        }
+
+    }
+
+    // All menu items
+    li {
+
+        text-transform: capitalize;
+        padding: 3px 70px 3px 30px;
+
+        // Active menu items
+        &.menu-active {
+            color: white;
+            background-color: rgb(0, 118, 216);
+            &[role="menuitemcheckbox"][aria-checked="true"]:before {
+                color: white;
+            }
+           &[role="menuitemradio"][aria-checked="true"]:before {
+                color: white;
+            }
+        }
+
+        // Disabled menu items
+        &[aria-disabled="true"] {
+            color: silver;
+        }
+
+        // Menu separators
+        &[role="separator"] {
+            border-color: ghostwhite;
+            background-color: rgb(190, 192, 208);
+            height: 1px;
+            margin: 5px;
+        }
+
+        // Icons
+        &.menu-icon:before {
+            font-family: FontAwesome;
+            font-size: 14px;
+            left: 4px;
+            width: 24px;
+            text-align: center;
+        }
+
+        // Checkboxes
+        &[role="menuitemcheckbox"] {
+
+            // Checked checkboxes
+            &[aria-checked="true"]:before {
+                font-family: FontAwesome;
+                font-size: 14px;
+                left: 4px;
+                width: 24px;
+                text-align: center;
+                content: '\f00c';
+                top: 4px;
+                color: #0076D8;
+            }
+
+            // Disabled checkboxes
+            &[aria-disabled="true"]:before {
+                color: silver;
+            }
+
+        }
+
+        // Radio buttons
+        &[role="menuitemradio"] {
+
+            // Checked radio buttons
+            &[aria-checked="true"]:before {
+                content: '\25cf';
+                top: 2px;
+                left: 10px;
+                font-size: 20px;
+                color: #0076D8;
+            }
+
+            // Disabled radio buttons
+            &[aria-disabled="true"]:before {
+                color: silver;
+            }
+        }
+
+        // Sub-menu affordance
+        .menu-submenu:after {
+            content: '\25b6';
+            right: 10px;
+            font-size: 11px;
+            -ms-transform: scale(1.5, 1.5);
+        }
+
+        // Right-aligned list items
+        &.menu-align-right .menu-submenu:after {
+            content: '\25c0';
+            right: 11px;
+            background-color: transparent;
+            -ms-transform: scale(1.5, 1.5);
+        }
+
+        // Keyboard shortcuts
+        [data-shortcut-display]:after {
+            right: 7px;
+            top: 3px;
+            font-size: 14px;
+        }
+
+    }
+
+
+    // Top menu items
+    & > li {
+        float: left;
+        padding-left: 12px;
+        padding-right: 12px;
+
+        // Right-aligned top-level menu items
+        &.menu-align-right {
+            float: right;
+            & > ul {
+                right: 0;
+            }
+        }
+
+        // First-level sub menus
+        & > ul {
+            margin-left: -12px; // Must match ul.menu-top > li padding above
+            border-bottom-left-radius: 5px;
+            border-bottom-right-radius: 5px;
+            border-bottom: 1px solid grey;
+            border-left: 1px solid grey;
+            border-right: 1px solid grey;
+
+            // Second and all subsequent-level sub menus
+            ul {
+                top: -4px;
+                border: 1px solid grey;
+                border-radius: 5px;
+            }
+
+        }
+
+        // Right-aligned flyout menus
+        &.menu-align-right > ul ul {
+            top: -4px;
+        }
+
+    }
+
+    // All open sub-menus
+    @for $i from 1 through 4 {
+        &.menu-focus ul.menu-open-#{$i} {
+            display: block;
+        }
+    }
+
+}
+
+// Windows 10 specific styling
+html.windows-nt {
+    ul.menu-top {
+        & > li ul {
+            border-radius: 0 !important;
+        }
+        li.menu-align-right .menu-submenu:after {
+            content: '\2039';
+            right: 11px;
+            font-size: 17px;
+            transform: scaleX(1.5);
+            background-color: transparent;
+        }
+    }
+    &.menu-submenu:after {
+        content: '\203a';
+        right: 10px;
+        font-size: 17px;
+        transform: scaleX(1.5);
+    }
+}
+
+// IE 8 specific styling
+html.ie8 {
+    // Make all checkboxes black to workaround pseudo-element styling bugs
+    ul.menu-top li[role="menuitemcheckbox"][aria-checked="true"]:before {
+        color: black !important;
+    }
+    ul.menu-top li[role="menuitemradio"][aria-checked="true"]:before {
+        color: black !important;
+    }
+}
+
+// iOS specific styling
+html.ios {
+    ul.menu-top {
+        .menu-submenu:after {
+            content: '\25b6\fe0e';
+        }
+
+        li.menu-align-right .menu-submenu:after {
+            content: '\25c0\fe0e';
+        }
+
+    }
+}

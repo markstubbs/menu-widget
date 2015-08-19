@@ -1,0 +1,14 @@
+
+@mixin select($select) {
+    -ms-user-select: $select;
+    -webkit-user-select: $select;
+    -moz-user-select: $select;
+    user-select: $select;
+}
+
+@mixin transform($transform) {
+    -ms-transform: $transform;
+    -webkit-transform: $transform;
+    -moz-transform: $transform;
+    transform: $transform;
+}
