@@ -133,6 +133,13 @@ Sub-menus are created by simply nesting `<ul>`s inside `<li>`s as shown in the e
 
 Menu item properties are specified using a combination of ARIA roles and HTML `data-*` attributes on the `<li>` tag.
 See the Reference section later for details.
-Separators are implicitly declared by creating an empty `<li>`.
 
-#### Identifying
+Notes about the example:
+* Action 1 has a `data-icon` that specifies a class to be added to its `:before` pseudo-element.
+In the examples here and in the online demo these classes are used to apply Font-Awesome styles to create icons.
+* Action 1 also has a `data-shortcut` attribute to specify a global keyboard shortcut - in this case Win+A (Windows) or Cmd+A (Mac).
+Shortcuts will be displayed according to the conventions of the target OS.
+* Action 2 has been disabled by specifying an `aria-disabled="true"` attribute.
+* Separators are implicitly declared by creating an empty `<li>`.
+* Checkboxes are created by adding an ARIA attribute `role="menuitemcheckbox"`.
+* Radio button groups are created by adding an ARIA attribute `role="menuitemradio"`.
