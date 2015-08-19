@@ -6,7 +6,7 @@ Highlights include:
 * Supports both fixed menus defined via HTML and dynamic items modified via a JavaScript API.
 * Supports up to 4 levels of hierarchical menus.
 * Supports right-aligned menus.
-* Includes ARIA-compliant roles.
+* Includes [WAI-ARIA](http://www.w3.org/TR/wai-aria/) compliant roles.
 * Full keyboard support, including menu activation hotkeys, navigation and global keyboard shortcuts.
 * Platform-aware styling for OS X and Windows (including Windows 10).
 * Does **not** rely on CSS hover. Menus will not appear until the user clicks on the widget and don't disappear if you accidentally mouse out of an open menu hierarchy.
@@ -85,19 +85,19 @@ Here's an example that illustrates a number of features:
         <ul>
             <li>action 3</li>
             <li>
-                menu2B
+                submenu 1
                 <ul>
                     <li>action 5</li>
                     <li>
-                        submenu 1
+                        submenu 2
                         <ul>
                             <li>
-                                action 6
+                                submenu 3
                                 <ul>
-                                    <li>action 8</li>
+                                    <li>action 7</li>
                                 </ul>
                             </li>
-                            <li>action 7</li>
+                            <li>action 6</li>
                         </ul>
                     </li>
                 </ul>
@@ -126,4 +126,5 @@ The top-level menubar is defined as a `<ul>` with a unique ID and a `display: no
 Menu action items are defined by adding `<li>`s to the list.
 Sub-menus are created by simply nesting `<ul>`s inside `<li>`s as shown in the example.
 
-
+Menu item properties are specified using a combination of ARIA roles and HTML `data-*` attributes on the `<li>` tag.
+See the Reference section later for details.
