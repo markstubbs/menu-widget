@@ -164,6 +164,6 @@ All events triggered by the widget include the ID of the clicked item in the `de
 
 See the Reference section later for more details.
 
-##### TODO
+##### Coming Soon
 
-Add a reference section.
+A reference section.
