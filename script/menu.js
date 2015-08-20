@@ -14,7 +14,8 @@ function Menu(sId, oOptions)
 {
     var _this = this;
     var _id = null;
-    var _elRoot;
+    var _elContainer;
+    var _elRootMenu;
     var _oListeners = {};
     var _iOpenSubMenuTimer;
     var _elCurrentActiveItem;
@@ -22,6 +23,7 @@ function Menu(sId, oOptions)
     var _bCreateNextMenuGroup = false;
     var _iPressedKeyCode = 0;
     var _bJustGotFocus = false;
+    var i, j;
 
     // Default options
     var _oOptions = {
@@ -90,14 +92,26 @@ function Menu(sId, oOptions)
         console.error('Missing menu id');
         return;
     }
-    _elRoot = document.getElementById(sId);
-    if (!_elRoot) {
-        console.error('Cannot find root menu with id ' + sId);
+
+    // Validate the given HTML structure
+    _elContainer = document.getElementById(sId);
+    if (!_elContainer) {
+        console.error('Cannot find root menu container with id ' + sId);
         return;
     }
-    if (_elRoot.nodeName !== 'UL') {
-        _elRoot = null;
-        console.error('Root menu element must be a <ul>');
+    if (_elContainer.nodeName !== 'DIV') {
+        console.error('Root menu container element must be a <div>');
+        return;
+    }
+    _elContainer.setAttribute('role', 'navigation');
+
+    if (!_elContainer.children.length) {
+        var _elMenuBar = document.createElement('UL');
+        _elContainer.appendChild(_elMenuBar);
+    }
+    _elRootMenu = _elContainer.children[0];
+    if (_elRootMenu.nodeName !== 'UL') {
+        console.error('Root menu container element must contain an <ul>');
         return;
     }
 
@@ -106,10 +120,6 @@ function Menu(sId, oOptions)
 
     // Merge any given options with the defaults
     Utils.merge(_oOptions, oOptions);
-
-    // Initialise live collections
-    var _cSubMenus = _elRoot.getElementsByTagName('ul');
-    var _cSubMenuItems = _elRoot.getElementsByTagName('li');
 
     // Install keyboard handler
     if (document.attachEvent) {
@@ -122,25 +132,36 @@ function Menu(sId, oOptions)
     }
 
     // Make sure any pre-declared menu structure has the correct properties
-    _elRoot.classList.add(_oOptions.prefix + '-top');
-    _elRoot.setAttribute('role', 'menubar');
+    _elRootMenu.classList.add(_oOptions.prefix + '-top');
+    _elRootMenu.setAttribute('role', 'menubar');
     //if (_oOptions.tabindex) {
     //    _elRoot.setAttribute('tabindex', _oOptions.tabindex);
     //}
-    _elRoot.style.zIndex += 50 - _id; // So menus higher up the page overlay ones further down
+    _elRootMenu.style.zIndex += 50 - _id; // So menus higher up the page overlay ones further down
 
-    // Set the appropriate classes on all menus
-    for (var i = 0; i < _cSubMenus.length; ++i) {
-        _cSubMenus[i].setAttribute('role', 'menu');
+
+    // Set classes on top-level items
+    for (i = 0; i < _elRootMenu.children.length; ++i) {
+        _decorateItem(_elRootMenu.children[i]);
     }
 
-    // Set the appropriate classes on all menu items
-    for (var j = 0; j < _cSubMenuItems.length; ++j) {
-        _decorateItem(_cSubMenuItems[j]);
+    // Set the appropriate classes on all sub-menus
+    var _cSubMenus = _elRootMenu.getElementsByTagName('ul');
+    for (i = 0; i < _cSubMenus.length; ++i) {
+        var elSubMenu = _cSubMenus[i];
+        elSubMenu.setAttribute('role', 'menu');
+        if (elSubMenu.parentNode.nodeName === 'LI') {
+            elSubMenu.setAttribute('aria-labelledby', elSubMenu.parentNode.id);
+        }
+        // Set the appropriate classes on all menu items
+        for (j = 0; j < elSubMenu.children.length; ++j) {
+            var elChild = elSubMenu.children[j];
+            _decorateItem(elChild);
+        }
     }
 
     // Make the entire menu structure visible
-    _elRoot.style.display = 'block';
+    _elContainer.style.display = 'block';
 
     // Handle focus
     //_elRoot.addEventListener('focus', function ()
@@ -168,18 +189,18 @@ function Menu(sId, oOptions)
     //    _clearAllMenus();
     //});
 
-        // Wire up generic menu hover handler
-    _elRoot.addEventListener('mouseover', function (e)
+    // Wire up generic menu hover handler
+    _elRootMenu.addEventListener('mouseover', function (e)
     {
         clearTimeout(_iOpenSubMenuTimer);
         if (e.target.getAttribute('aria-disabled') !== 'true' && e.target.getAttribute('role') !== 'separator') {
-            if (_elRoot.classList.contains(_oOptions.prefix + '-focus') && e.target.nodeName === 'LI') {
+            if (_elRootMenu.classList.contains(_oOptions.prefix + '-focus') && e.target.nodeName === 'LI') {
 
                  _this.dispatchEvent('enter', e.target.id);
                 _elCurrentActiveItem = e.target;
 
                 // Clear currently active menu chain
-                var _cActiveMenuItems = _elRoot.querySelectorAll('.' + _oOptions.prefix + '-active');
+                var _cActiveMenuItems = _elRootMenu.querySelectorAll('.' + _oOptions.prefix + '-active');
                 for (var i = 0; i < _cActiveMenuItems.length; i++) {
                     _cActiveMenuItems[i].classList.remove(_oOptions.prefix + '-active');
                 }
@@ -187,7 +208,7 @@ function Menu(sId, oOptions)
                 // Work out which menu level we're on (and set classes to show the active menu chain)
                 var iMenuLevel = 1;
                 var elNode = e.target;
-                while (elNode !== _elRoot) {
+                while (elNode !== _elRootMenu) {
                     switch (elNode.nodeName) {
                         case 'UL':
                             ++iMenuLevel;
@@ -200,7 +221,7 @@ function Menu(sId, oOptions)
                 }
 
                 // If this is a top-level menu open it immediately, else open it after a short delay
-                if (!_oShortcutMap.show || e.target.parentNode === _elRoot || _oOptions.popupDelay === 0) {
+                if (!_oShortcutMap.show || e.target.parentNode === _elRootMenu || _oOptions.popupDelay === 0) {
                     _openSubMenu(e.target, iMenuLevel);
                 } else {
                     _iOpenSubMenuTimer = setTimeout(function () {
@@ -212,9 +233,9 @@ function Menu(sId, oOptions)
          e.stopPropagation();
     });
 
-    _elRoot.addEventListener('mouseout', function (e)
+    _elRootMenu.addEventListener('mouseout', function (e)
     {
-        if (_elRoot.classList.contains(_oOptions.prefix + '-focus') && e.target.nodeName === 'LI') {
+        if (_elRootMenu.classList.contains(_oOptions.prefix + '-focus') && e.target.nodeName === 'LI') {
             if (!e.target.children.length) {
                 e.target.classList.remove(_oOptions.prefix + '-active');
             }
@@ -225,20 +246,20 @@ function Menu(sId, oOptions)
         e.stopPropagation();
     });
 
-    _elRoot.addEventListener('touchstart', function (e) {
+    _elRootMenu.addEventListener('touchstart', function (e) {
         e.stopPropagation();
         _bIgnoreClick = true;
         var elTouched = e.target;
         _oOptions.popupDelay = 0;
 
         // If the menu bar was touched clear all active menus
-        if (elTouched === _elRoot) {
+        if (elTouched === _elRootMenu) {
             _clearAllMenus();
             return;
         }
 
         // If a top-level menu item was touched clear all menu items first
-        if (elTouched.parentNode === _elRoot) {
+        if (elTouched.parentNode === _elRootMenu) {
             _clearAllMenus();
         }
 
@@ -247,12 +268,12 @@ function Menu(sId, oOptions)
         if (!bDisabled) {
             var bHasSubMenu = !!elTouched.children.length;
             // Is this a top-level item?
-            if (elTouched.parentNode === _elRoot) {
-                _elRoot.classList.toggle(_oOptions.prefix + '-focus');
+            if (elTouched.parentNode === _elRootMenu) {
+                _elRootMenu.classList.toggle(_oOptions.prefix + '-focus');
                 elTouched.classList.toggle(_oOptions.prefix + '-active');
                 if (elTouched.classList.contains(_oOptions.prefix + '-active')) {
                     // Top-level item is active
-                    _clearAllMenus(_elRoot);
+                    _clearAllMenus(_elRootMenu);
                     _elCurrentActiveItem = elTouched;
                     _this.dispatchEvent('enter', elTouched.id);
                     if (!bHasSubMenu) {
@@ -290,7 +311,7 @@ function Menu(sId, oOptions)
         }
     });
 
-    _elRoot.addEventListener('click', function (e)
+    _elRootMenu.addEventListener('click', function (e)
     {
         e.stopPropagation();
         e.preventDefault();
@@ -304,7 +325,7 @@ function Menu(sId, oOptions)
         var elClicked = e.target;
 
         // If the menu bar was clicked clear all active menus
-        if (elClicked === _elRoot) {
+        if (elClicked === _elRootMenu) {
             _clearAllMenus();
             return;
         }
@@ -314,16 +335,16 @@ function Menu(sId, oOptions)
         if (!bDisabled) {
             var bHasSubMenu = !!elClicked.children.length;
             // Is this a top-level item?
-            if (elClicked.parentNode === _elRoot) {
+            if (elClicked.parentNode === _elRootMenu) {
                 if (_bJustGotFocus) {
                     _bJustGotFocus = false;
                 } else {
-                    _elRoot.classList.toggle(_oOptions.prefix + '-focus');
+                    _elRootMenu.classList.toggle(_oOptions.prefix + '-focus');
                     elClicked.classList.toggle(_oOptions.prefix + '-active');
                 }
                 if (elClicked.classList.contains(_oOptions.prefix + '-active')) {
                     // Top-level item is active
-                    _clearAllMenus(_elRoot);
+                    _clearAllMenus(_elRootMenu);
                     _elCurrentActiveItem = elClicked;
                     _this.dispatchEvent('enter', elClicked.id);
                     if (!bHasSubMenu) {
@@ -397,12 +418,12 @@ function Menu(sId, oOptions)
         } else {
             // No ID specified so we are going to insert into the top-level menu bar
             // If we already have items in it then insert after the last one
-            if (_elRoot.children.length) {
-                elBaseItem = _elRoot.children[_elRoot.children.length - 1];
+            if (_elRootMenu.children.length) {
+                elBaseItem = _elRootMenu.children[_elRootMenu.children.length - 1];
             } else {
                 // Menu bar is empty so create a temporary item to use as the base for the insert
                 elTempSubMenuItem = document.createElement('li');
-                _elRoot.appendChild(elTempSubMenuItem);
+                _elRootMenu.appendChild(elTempSubMenuItem);
                 elBaseItem = elTempSubMenuItem;
             }
         }
@@ -411,7 +432,7 @@ function Menu(sId, oOptions)
 
             // If we created a temporary item we can remove it now
             if (elTempSubMenuItem) {
-                _elRoot.removeChild(elTempSubMenuItem);
+                _elRootMenu.removeChild(elTempSubMenuItem);
             }
         }
 
@@ -434,12 +455,12 @@ function Menu(sId, oOptions)
         } else {
             // No ID specified so we are going to insert into the top-level menu bar
             // If we already have items in it then insert after the last one
-            if (_elRoot.children.length) {
-                elBaseItem = _elRoot.children[0];
+            if (_elRootMenu.children.length) {
+                elBaseItem = _elRootMenu.children[0];
             } else {
                 // Menu bar is empty so create a temporary item to use as the base for the insert
                 elTempSubMenuItem = document.createElement('li');
-                _elRoot.appendChild(elTempSubMenuItem);
+                _elRootMenu.appendChild(elTempSubMenuItem);
                 elBaseItem = elTempSubMenuItem;
             }
         }
@@ -449,7 +470,7 @@ function Menu(sId, oOptions)
 
             // If we created a temporary item we can remove it now
             if (elTempSubMenuItem) {
-                _elRoot.removeChild(elTempSubMenuItem);
+                _elRootMenu.removeChild(elTempSubMenuItem);
             }
         }
 
@@ -614,7 +635,7 @@ function Menu(sId, oOptions)
      */
     _this.getGroupChecked = function (sName)
     {
-        var elChecked = _elRoot.querySelector('li[name="' + sName + '"][aria-checked="true"]');
+        var elChecked = _elRootMenu.querySelector('li[name="' + sName + '"][aria-checked="true"]');
         return elChecked ? elChecked.id : null;
     };
 
@@ -855,12 +876,7 @@ function Menu(sId, oOptions)
             _bCreateNextMenuGroup = true;
         } else {
 
-            // Assign a default ARIA role if none has been provided
             var sRole = elSubMenuItem.getAttribute('role');
-            if (!sRole) {
-                elSubMenuItem.setAttribute('role', 'menuitem');
-                sRole = 'menuitem';
-            }
 
             // If the menu item has no ID then create one from the menu text
             if (!elSubMenuItem.id) {
@@ -870,15 +886,22 @@ function Menu(sId, oOptions)
             }
 
             // If this is not a top-level item...
-            if (elSubMenuItem.parentNode !== _elRoot) {
-                // If it has a child list then it's a sub-menu so add the correct class
+            if (elSubMenuItem.parentNode !== _elRootMenu) {
+                // If it has a child list then it's a sub-menu so set its attributes
                 if (elSubMenuItem.children.length) {
                     elSubMenuItem.classList.add(_oOptions.prefix + '-' + 'submenu');
+                    elSubMenuItem.setAttribute('aria-haspopup', 'true');
                     // If there are no items in the sub-menu yet add a placeholder
                     if (!elSubMenuItem.children[0].children.length) {
                         elSubMenuItem.children[0].appendChild(_createPlaceholderItem(elSubMenuItem.getAttribute('data-placeholder')));
                     }
                 }
+            }
+
+            // Assign a default role if none has been provided
+            if (!sRole) {
+                elSubMenuItem.setAttribute('role', 'menuitem');
+                sRole = 'menuitem';
             }
 
             // Generate a name for radio button groups if we don't yet have one
@@ -1079,7 +1102,7 @@ function Menu(sId, oOptions)
     function _getMenuLevel(elMenuItem)
     {
         var iLevel = 1;
-        while (elMenuItem.parentNode && elMenuItem.parentNode !== _elRoot) {
+        while (elMenuItem.parentNode && elMenuItem.parentNode !== _elRootMenu) {
             elMenuItem = elMenuItem.parentNode;
             ++iLevel;
         }
@@ -1170,11 +1193,11 @@ function Menu(sId, oOptions)
             if (_elCurrentActiveItem) {
                  _clearAllMenus();
              } else {
-                 if (_elRoot.children) {
-                     _elRoot.classList.add(_oOptions.prefix + '-focus');
+                 if (_elRootMenu.children) {
+                     _elRootMenu.classList.add(_oOptions.prefix + '-focus');
                      // Select the first enabled top-level menu item
-                     for (i = 0; i < _elRoot.children.length; i++) {
-                         var elTopLevelMenuItem = _elRoot.children[i];
+                     for (i = 0; i < _elRootMenu.children.length; i++) {
+                         var elTopLevelMenuItem = _elRootMenu.children[i];
                          if (elTopLevelMenuItem.getAttribute('aria-disabled') !== 'true') {
                              elTopLevelMenuItem.classList.add(_oOptions.prefix + '-active');
                              _openSubMenu(elTopLevelMenuItem, 1);
@@ -1183,8 +1206,8 @@ function Menu(sId, oOptions)
                          }
                      }
 
-                     _openSubMenu(_elRoot.children[0], 1);
-                     _elCurrentActiveItem = _elRoot.children[0];
+                     _openSubMenu(_elRootMenu.children[0], 1);
+                     _elCurrentActiveItem = _elRootMenu.children[0];
                  }
              }
              e.stopPropagation();
@@ -1192,7 +1215,7 @@ function Menu(sId, oOptions)
         }
 
         // Ignore menu navigation keystrokes if we don't have focus
-        if (_elRoot.classList.contains(_oOptions.prefix + '-focus')) {
+        if (_elRootMenu.classList.contains(_oOptions.prefix + '-focus')) {
             switch (iKeyCode) {
                 case 13: // Enter
                 case 32: // Space
@@ -1249,13 +1272,13 @@ function Menu(sId, oOptions)
         var aTopLevelItems;
         var iItemIndex;
         var elMenu;
-        var elActiveTopMenu = _elRoot.querySelector('ul.menu-top.menu-focus > li.' + _oOptions.prefix + '-active');
+        var elActiveTopMenu = _elRootMenu.querySelector('ul.menu-top.menu-focus > li.' + _oOptions.prefix + '-active');
         if (!elActiveTopMenu) {
             return;
         }
 
         // Invert right-left arrow keys for sub-menus that are inside a right-aligned top menu
-        var bInvertLeftRight = _elCurrentActiveItem.parentNode !== _elRoot && elActiveTopMenu.getAttribute('data-align') === 'right';
+        var bInvertLeftRight = _elCurrentActiveItem.parentNode !== _elRootMenu && elActiveTopMenu.getAttribute('data-align') === 'right';
         if (bInvertLeftRight) {
             if (iKeyCode == 37) iKeyCode = 39;
             else if (iKeyCode == 39) iKeyCode = 37;
@@ -1321,7 +1344,7 @@ function Menu(sId, oOptions)
 
             case 39: // Right-arrow
                 // If the currently active item isn't a top-level item and contains a sub-menu then open and activate it
-                if (_elCurrentActiveItem.parentNode !== _elRoot && _elCurrentActiveItem.children.length) {
+                if (_elCurrentActiveItem.parentNode !== _elRootMenu && _elCurrentActiveItem.children.length) {
                     _openSubMenu(_elCurrentActiveItem, _getLevel(_elCurrentActiveItem), true);
                 } else {
                     aTopLevelItems = _sortTopLevelItems();
@@ -1355,7 +1378,7 @@ function Menu(sId, oOptions)
 
             case 38: // Up-arrow
                 // If the currently active menu is a top-level menu then start with its last sub-menu item
-                if (_elCurrentActiveItem.parentNode === _elRoot && elActiveTopMenu.children.length) {
+                if (_elCurrentActiveItem.parentNode === _elRootMenu && elActiveTopMenu.children.length) {
                     elNextItem = elActiveTopMenu.children[0].children[elActiveTopMenu.children[0].children.length - 1];
                 } else {
                     elNextItem = _elCurrentActiveItem.previousElementSibling;
@@ -1365,7 +1388,7 @@ function Menu(sId, oOptions)
 
             case 40: // Down-arrow
                 // If the currently active menu is a top-level menu then open and activate its first enabled sub-menu item
-                if (_elCurrentActiveItem.parentNode === _elRoot && elActiveTopMenu.children.length) {
+                if (_elCurrentActiveItem.parentNode === _elRootMenu && elActiveTopMenu.children.length) {
                     if (_elCurrentActiveItem.children.length && !_elCurrentActiveItem.children[0].classList.contains(_oOptions.prefix + '-open-1')) {
                         _openSubMenu(_elCurrentActiveItem, 1);
                     }
@@ -1378,7 +1401,7 @@ function Menu(sId, oOptions)
 
             case 33: // Page-up
                 // Activate the first sub-menu item in the current menu (or parent menu if we're a top-level item)
-                elMenu = _elCurrentActiveItem.parentNode === _elRoot ? _elCurrentActiveItem.children[0] : _elCurrentActiveItem.parentNode;
+                elMenu = _elCurrentActiveItem.parentNode === _elRootMenu ? _elCurrentActiveItem.children[0] : _elCurrentActiveItem.parentNode;
                 if (elMenu) {
                     elNextItem = elMenu.children[0];
                     _activateValidItem();
@@ -1387,7 +1410,7 @@ function Menu(sId, oOptions)
 
             case 34: // Page-down
                 // Activate the last sub-menu item in the current menu (or parent menu if we're a top-level item)
-                elMenu = _elCurrentActiveItem.parentNode === _elRoot ? _elCurrentActiveItem.children[0] : _elCurrentActiveItem.parentNode;
+                elMenu = _elCurrentActiveItem.parentNode === _elRootMenu ? _elCurrentActiveItem.children[0] : _elCurrentActiveItem.parentNode;
                 if (elMenu) {
                     elNextItem = elMenu.children[elMenu.children.length - 1];
                     _activateValidItem(true);
@@ -1406,7 +1429,7 @@ function Menu(sId, oOptions)
             // If the suggested item is different to the current one then activate it
             if (elNextItem && elNextItem !== _elCurrentActiveItem) {
                 // Don't deactivate the top-level menu item while navigating within it
-                if (_elCurrentActiveItem.parentNode !== _elRoot) {
+                if (_elCurrentActiveItem.parentNode !== _elRootMenu) {
                     _elCurrentActiveItem.classList.remove(_oOptions.prefix + '-active');
                 }
                 elNextItem.classList.add(_oOptions.prefix + '-active');
@@ -1426,8 +1449,8 @@ function Menu(sId, oOptions)
     function _sortTopLevelItems()
     {
         var aTopLevelItems = [];
-        for (var i = 0, iMax = _elRoot.children.length; i < iMax; i++) {
-            var elChild = _elRoot.children[i];
+        for (var i = 0, iMax = _elRootMenu.children.length; i < iMax; i++) {
+            var elChild = _elRootMenu.children[i];
             aTopLevelItems.push(elChild);
         }
         aTopLevelItems.sort(function(a, b) {
@@ -1459,7 +1482,7 @@ function Menu(sId, oOptions)
     function _getLevel(elMenuItem)
     {
         var iMenuLevel = 1;
-        while (elMenuItem !== _elRoot) {
+        while (elMenuItem !== _elRootMenu) {
             if (elMenuItem.nodeName === 'UL') {
                 ++iMenuLevel;
             }

@@ -33,7 +33,7 @@
     <script src="/script/polyfills/Array.find.min.js"></script>
     <script src="/script/utils.min.js"></script>
     <script src="/script/platform.min.js"></script>
-    <script src="/script/menu.min.js"></script>
+    <script src="/script/menu.js"></script>
 
     <style>
         body {
@@ -95,113 +95,116 @@
 <span id="menu-1-clicked">&nbsp;</span>
 
 <!-- Declarative menu-->
-<ul id="menu-bar-1" style="display:none">
-    <li>
-        menu1
-        <ul>
-            <li role="menuitemcheckbox" data-shortcut="c t" aria-checked="true">i am a checked checkbox</li>
-            <li role="menuitemcheckbox" data-shortcut="c u">i am another checkbox</li>
-            <li data-shortcut="s x" aria-disabled="true">i am disabled</li>
-            <li data-shortcut="x">i have a shortcut</li>
-            <li></li>
-            <li data-icon="class(fa-comment)">i have an icon</li>
-            <li data-icon="class(fa-cloud)" aria-disabled="true">i have an icon (disabled)</li>
-        </ul>
-    </li>
-    <li>
-        menu2
-        <ul>
-            <li>i am an action</li>
-            <li data-placeholder="nothing to see here">
-                i have a sub-menu
-                <ul>
-                    <li>
-                        action 1
-                        <ul>
-                            <li aria-disabled="true">action 1A</li>
-                            <li>action 1B</li>
-                        </ul>
-                    </li>
-                    <li>action 2</li>
-                    <li>
-                        action 3
-                        <ul>
-                            <li>action 3A</li>
-                            <li>action 3B</li>
-                        </ul>
-                    </li>
-                </ul>
-            </li>
-            <li>
-                i also have a sub-menu
-                <ul>
-                    <li>
-                        action a
-                        <ul>
-                            <li aria-disabled="true">action A1</li>
-                            <li>action A2</li>
-                        </ul>
-                    </li>
-                    <li>
-                        action b
-                        <ul>
-                            <li>action b1</li>
-                            <li>action b2</li>
-                        </ul>
-                    </li>
-                </ul>
-            </li>
-            <li></li>
-            <li role="menuitemcheckbox" aria-checked="true">i am another checkbox</li>
-            <li role="menuitemcheckbox" data-shortcut="s t" aria-disabled="true" aria-checked="true">i am a disabled checkbox</li>
-            <li></li>
-            <li role="menuitemradio" aria-checked="true">radio button 1</li>
-            <li role="menuitemradio">radio button 2</li>
-            <li role="menuitemradio">radio button 3</li>
-            <li></li>
-            <li role="menuitemradio">radio button A</li>
-            <li role="menuitemradio">radio button B</li>
-            <li role="menuitemradio" aria-checked="true">radio button C</li>
-        </ul>
-    </li>
-    <li>
-        menu3 (empty)
-    </li>
-    <li aria-disabled="true">
-        menu4 (disabled)
-        <ul>
-            <li><span style="color:red">shouldn't see this</span></li>
-            <li><span style="color:red">or this!</span></li>
-        </ul>
-    </li>
-    <li data-align="right">
-        help
-        <ul>
-            <li data-icon="class(fa-info)">
-                Getting Started
-                <ul>
-                    <li>
-                        Menus
-                        <ul>
-                            <li>Opening a Menu</li>
-                            <li>Closing a Menu</li>
-                        </ul>
-                    </li>
-                    <li>Window Manager</li>
-                </ul>
-            </li>
-            <li></li>
-            <li data-shortcut="f1">About Test 1</li>
-        </ul>
-    </li>
-    <li>menu 6 (no submenu)</li>
-</ul>
+<div id="menu-1" style="display:none">
+    <ul>
+        <li>
+            menu1
+            <ul>
+                <li role="menuitemcheckbox" data-shortcut="c t" aria-checked="true">i am a checked checkbox</li>
+                <li role="menuitemcheckbox" data-shortcut="c u">i am another checkbox</li>
+                <li data-shortcut="s x" aria-disabled="true">i am disabled</li>
+                <li data-shortcut="x">i have a shortcut</li>
+                <li></li>
+                <li data-icon="class(fa-comment)">i have an icon</li>
+                <li data-icon="class(fa-cloud)" aria-disabled="true">i have an icon (disabled)</li>
+            </ul>
+        </li>
+        <li>
+            menu2
+            <ul>
+                <li>i am an action</li>
+                <li data-placeholder="nothing to see here">
+                    i have a sub-menu
+                    <ul>
+                        <li>
+                            action 1
+                            <ul>
+                                <li aria-disabled="true">action 1A</li>
+                                <li>action 1B</li>
+                            </ul>
+                        </li>
+                        <li>action 2</li>
+                        <li>
+                            action 3
+                            <ul>
+                                <li>action 3A</li>
+                                <li>action 3B</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    i also have a sub-menu
+                    <ul>
+                        <li>
+                            action a
+                            <ul>
+                                <li aria-disabled="true">action A1</li>
+                                <li>action A2</li>
+                            </ul>
+                        </li>
+                        <li>
+                            action b
+                            <ul>
+                                <li>action b1</li>
+                                <li>action b2</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li></li>
+                <li role="menuitemcheckbox" aria-checked="true">i am another checkbox</li>
+                <li role="menuitemcheckbox" data-shortcut="s t" aria-disabled="true" aria-checked="true">i am a disabled checkbox</li>
+                <li></li>
+                <li role="menuitemradio" aria-checked="true">radio button 1</li>
+                <li role="menuitemradio">radio button 2</li>
+                <li role="menuitemradio">radio button 3</li>
+                <li></li>
+                <li role="menuitemradio">radio button A</li>
+                <li role="menuitemradio">radio button B</li>
+                <li role="menuitemradio" aria-checked="true">radio button C</li>
+            </ul>
+        </li>
+        <li>
+            menu3 (empty)
+        </li>
+        <li aria-disabled="true">
+            menu4 (disabled)
+            <ul>
+                <li><span style="color:red">shouldn't see this</span></li>
+                <li><span style="color:red">or this!</span></li>
+            </ul>
+        </li>
+        <li data-align="right">
+            help
+            <ul>
+                <li data-icon="class(fa-info)">
+                    Getting Started
+                    <ul>
+                        <li>
+                            Menus
+                            <ul>
+                                <li>Opening a Menu</li>
+                                <li>Closing a Menu</li>
+                            </ul>
+                        </li>
+                        <li>Window Manager</li>
+                    </ul>
+                </li>
+                <li></li>
+                <li data-shortcut="f1">About Test 1</li>
+            </ul>
+        </li>
+        <li>menu 6 (no submenu)</li>
+    </ul>
+</div>
+
 <p>This is content below a menu.</p>
 
 <div style="margin-top:150px">
     <span id="menu-2-over">&nbsp;</span>
     <span id="menu-2-clicked">&nbsp;</span>
-    <ul id="menu-bar-2" style="display:none"></ul>
+    <div id="menu-2" style="display:none"></div>
 </div>
 
 <script>
@@ -213,12 +216,11 @@
     // Test - specify unknown menu ID
     new Menu('menu-bar-missing');
 
-    // Test - known element that's not a UL
+    // Test - known element that's not a DIV
     new Menu('page-heading');
 
     // Test - valid root menu
-    var oMenu1 = new Menu('menu-bar-1', {
-        tabindex: 1,
+    var oMenu1 = new Menu('menu-1', {
         hotkey: { keycode: 77, modifiers: { c: true, a: false, m: false, s: false } } // Ctrl M
     });
 
@@ -265,8 +267,7 @@
     oMenu1.remove('menu-item-menu3-one');
 
     // Test Menu API
-    var oMenu2 = new Menu('menu-bar-2', {
-        tabindex: 2,
+    var oMenu2 = new Menu('menu-2', {
         hotkey: { keycode: 77, modifiers: { c: true, a: false, m: false, s: true } } // Ctrl + Shift M
     });
 
