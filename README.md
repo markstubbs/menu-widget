@@ -169,7 +169,7 @@ See the Reference section later for more details.
 
 ## Reference
 
-##### Constructor Options
+##### Constructor OptionsÅ
 
 The following options are supported when instantiating a new Menu object:
 
@@ -195,7 +195,7 @@ The following attributes may be assigned to static menu `<li>`s defined in HTML:
 
 | Attribute | Default Value | Description
 | ------ | ------- | -----------
-| `role` | `menuitem`  | `menuitem` An action or .<br>`menuitemcheckbox` Defines a checkbox that can be toggled on/off.<br>`menuitemradio` Creates a menu item that represents one of a group of related options.  Only one option in the group can be selected at a time. When 'on' a blob is shown next to the menu item.
+| `role` | `menuitem`  | `menuitem` A simple action menu item.<br>`menuitemcheckbox` Defines a checkbox that can be toggled on/off.<br>`menuitemradio` Creates a menu item that represents one of a group of related options.  Only one option in the group can be selected at a time. When 'on' a blob is shown next to the menu item.
 
 ##### JavaScript API
 
