@@ -169,7 +169,7 @@ See the Reference section later for more details.
 
 ## Reference
 
-##### Constructor OptionsÅ
+##### Constructor Options
 
 The following options are supported when instantiating a new Menu object:
 
