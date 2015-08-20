@@ -30,7 +30,8 @@ function Menu(sId, oOptions)
         prefix: 'menu',
         popupDelay: 300,
         menuActiveDuration: 120,
-        hotkey: null
+        hotkey: null,
+        skipDisabledItems: true
     };
 
     document.documentElement.classList.add(platform.os.family.toLowerCase().replace(/\W+/g, '-'));
@@ -1289,7 +1290,7 @@ function Menu(sId, oOptions)
             case 32: // Space
                 if (_elCurrentActiveItem) {
                     // Handle action items
-                    if (_elCurrentActiveItem.children.length === 0) {
+                    if (_elCurrentActiveItem.children.length === 0 && _elCurrentActiveItem.getAttribute('aria-disabled') !== 'true') {
                         // Deal with a checkbox menu item
                         var sRole = _elCurrentActiveItem.getAttribute('role');
                         if (sRole === 'menuitemcheckbox') {
@@ -1331,7 +1332,7 @@ function Menu(sId, oOptions)
                             }
                         }
                         elNextItem = aTopLevelItems[iItemIndex];
-                    } while (elNextItem.getAttribute('aria-disabled') === 'true' && iLooped < 3);
+                    } while (_oOptions.skipDisabledItems && elNextItem.getAttribute('aria-disabled') === 'true' && iLooped < 3);
                     if (elActiveTopMenu !== elNextItem) {
                         _deactivateMenu(elActiveTopMenu);
                         elNextItem.classList.add(_oOptions.prefix + '-active');
@@ -1365,7 +1366,7 @@ function Menu(sId, oOptions)
                             }
                         }
                         elNextItem = aTopLevelItems[iItemIndex];
-                    } while (elNextItem.getAttribute('aria-disabled') === 'true' && iLooped < 3);
+                    } while (_oOptions.skipDisabledItems && elNextItem.getAttribute('aria-disabled') === 'true' && iLooped < 3);
                     if (elActiveTopMenu !== elNextItem) {
                         _deactivateMenu(elActiveTopMenu);
                         elNextItem.classList.add(_oOptions.prefix + '-active');
@@ -1422,7 +1423,7 @@ function Menu(sId, oOptions)
         function _activateValidItem(bBackwards)
         {
             // Skip separators and disabled items
-            while (elNextItem && (elNextItem.getAttribute('role') === 'separator' || elNextItem.getAttribute('aria-disabled') === 'true')) {
+            while (elNextItem && (elNextItem.getAttribute('role') === 'separator' || _oOptions.skipDisabledItems && elNextItem.getAttribute('aria-disabled') === 'true')) {
                 elNextItem = bBackwards ? elNextItem.previousElementSibling : elNextItem.nextElementSibling;
             }
 
