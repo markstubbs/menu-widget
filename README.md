@@ -275,7 +275,6 @@ ___
 getGroupChecked(groupName)
 ```
 Returns the ID of the currently checked item in the given radio group, or null if the group doesn't exist or no element is checked.
-```
 ___
 
 ```javascript
@@ -284,15 +283,13 @@ insertAfter(menuId, newItems)
 Inserts one or more menu items immediately after a menu item and at the same level.
 If menuID is blank or null the items will be appended to the top-level menu bar.
 'newItems' can be one or an array of strings or objects specifying the new item(s) (see `append` above for more details).
-```
 ___
 
 ```javascript
 insertBefore(menuId, newItems)
 ```
-Inserts one or more menu items immediately after a menu item and at the same level.
+Inserts one or more menu items immediately before a menu item and at the same level.
 If menuID is blank or null the items will be prepended to the top-level menu bar.
 'newItems' can be one or an array of strings or objects specifying the new item(s) (see `append` above for more details).
-```
 
 ##### Events
