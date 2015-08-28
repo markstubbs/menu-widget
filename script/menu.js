@@ -1348,6 +1348,7 @@ function Menu(sId, oOptions)
             case 39: // Right-arrow
                 // If the currently active item isn't a top-level item and contains a sub-menu then open and activate it
                 if (_elCurrentActiveItem.parentNode !== _elRootMenu && _elCurrentActiveItem.children.length) {
+                    self.dispatchEvent('leave', _elCurrentActiveItem.id);
                     _openSubMenu(_elCurrentActiveItem, _getLevel(_elCurrentActiveItem), true);
                 } else {
                     aTopLevelItems = _sortTopLevelItems();
