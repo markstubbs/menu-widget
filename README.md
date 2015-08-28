@@ -222,7 +222,7 @@ Converts the menu item to a sub-menu style (with an arrow affordance), overridin
 
 `newItems` can be one (or an array) of:
 * A string containing the new menu item's display text.
-In this case the menu will be a default (action) menu with no icon whose ID is calculated by replacing any spaces or non-word characters in the text with a single hyphen.
+In this case the menu will be an enabled, default (action) menu with no icon whose ID is calculated by replacing any spaces or non-word characters in the text with a single hyphen.
 **No check is made for duplicate IDs** - if you need two items with the same text you'll need to manually specify the ID of the menu - see below.
 * An object describing the new menu item:
 ```javascript
@@ -235,17 +235,16 @@ In this case the menu will be a default (action) menu with no icon whose ID is c
     placeholder: "Nothing to see here",                 // Placeholder text to show if a sub-menu has no items (default = "No items")
     role: "menuitem|menuitemcheckbox|menuitemradio",    // Default = "menuitem"
     shortcut: "[c a d m] X|Fnn",                        // Keyboard shortcut, where c a d m represent optional modifier keys, X is an alphanumeric character and Fnn a function key number e.g. F12
-    text: "some menu display text",
+    text: "some menu display text"                      // MANDATORY
  }
 ```
 All properties except `text` are optional.
 ___
 
 ```javascript
-append(menuId, newItems)
+clear(menuId, removeSubMenu)
 ```
-Appends one or more items to the sub-menu attached to a menu item.
-Will automatically create a new sub-menu if one does not yet exist.
-Converts the given menu item to a sub-menu style (with an arrow affordance), overriding any checkbox or radio button attributes.
+Empties an item's sub-menu and (if `removeSubMenu` is `true`) removes the sub-menu entirely.
+
 
 ##### Events
