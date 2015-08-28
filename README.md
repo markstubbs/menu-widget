@@ -199,7 +199,7 @@ The following attributes may be assigned to static menu `<li>`s defined via HTML
 | `aria-checked` | `false`  | When `true` a checkbox or radio button menu item is marked as selected.
 | `aria-disabled` | `false`  | When `true` a menu item is disabled and grayed out.  Disabled items will not fire `select` events.
 | `data-icon` | `<blank>`  | Specifies a class to be added to the menu item's icon element.  Syntax: `class(`*`className`*`)`
-| `data-shortcut` | `<blank>`  | Defines a keyboard shortcut for the menu item. May include a space-separated list of modifier key characters (`c`- Ctrl, `a` - Alt, `s` - Shift and `m` - Meta). Specifying a shortcut of `c a A` would trigger the menu item's `select` event by pressing the `Ctrl+Alt+a` keys simultaneously.
+| `data-shortcut` | `<blank>`  | Defines a keyboard shortcut for the menu item. May include a space-separated list of modifier key characters (`c`- Ctrl, `a` - Alt, `s` - Shift and `m` - Meta). Specifying a shortcut of `c a A` would trigger the menu item's `select` event by pressing the `Ctrl+Alt+a` keys simultaneously.  Function keys may be specified as Fnn.
 | `role` | `menuitem`  | `menuitem` A simple action menu item.<br>`menuitemcheckbox` Defines a checkbox that can be toggled on/off.<br>`menuitemradio` Creates a menu item that represents one of a group of related options.  Only one option in the group can be selected at a time. When 'on' a blob is shown next to the menu item.
 
 ##### JavaScript API
@@ -210,6 +210,7 @@ Menus can be created and manipulated in JavaScript using the following API. All 
 addEventListener(eventType, callback)
 ```
 Similar to the DOM event.  Listens for an `eventType` event and runs the `callback` function when the event is triggered.
+See the Events section later for details.
 ___
 
 ```javascript
@@ -220,18 +221,22 @@ Will automatically create a new sub-menu if one does not yet exist.
 Converts the menu item to a sub-menu style (with an arrow affordance), overriding any existing checkbox or radio button attributes.
 
 `newItems` can be one (or an array) of:
-* A string containing the text to display for the item.
+* A string containing the new menu item's display text.
 In this case the menu will be a default (action) menu with no icon whose ID is calculated by replacing any spaces or non-word characters in the text with a single hyphen.
 **No check is made for duplicate IDs** - if you need two items with the same text you'll need to manually specify the ID of the menu - see below.
 * An object describing the new menu item:
 ```javascript
 {
+    align: "right|left",                                // Align item to the right-hand side of the menubar (only applies to top-level items). Default = "left"
+    checked: true|false,                                // Default = false
+    disabled: true|false,                               // Default = false
+    icon: "class(className)",                           // Default = <blank>
+    id: "a-menu-id",                                    // If omitted will be calculated using text property
+    placeholder: "Nothing to see here",                 // Placeholder text to show if a sub-menu has no items (default = "No items")
+    role: "menuitem|menuitemcheckbox|menuitemradio",    // Default = "menuitem"
+    shortcut: "[c a d m] X|Fnn",                        // Keyboard shortcut, where c a d m represent optional modifier keys, X is an alphanumeric character and Fnn a function key number e.g. F12
     text: "some menu display text",
-    id: "a-menu-id",                                    // If omitted will be calculated using the text property
-    role: "menuitem|menuitemcheckbox|menuitemradio",    // default = "menuitem"
-    checked: true|false,                                // default = false
-    disabled: true|false,                               // default = false
-}
+ }
 ```
 All properties except `text` are optional.
 ___
