@@ -205,7 +205,7 @@ The following attributes may be assigned to static menu `<li>`s defined via HTML
 
 ##### JavaScript API
 
-Menus can be created and manipulated in JavaScript using the following API.
+Menus can be created and manipulated in JavaScript using the following API:
 
 ```javascript
 addEventListener(eventType, callback)
@@ -232,10 +232,11 @@ In this case the menu will be an enabled, default (action) menu with no icon who
     checked: true|false,                                // Default = false
     className: "a-custom-class",                        // Adds a custom class name to the item. Default = ""
     disabled: true|false,                               // Default = false
-    icon: "class(className)",                           // Default = null
+    icon: "class(className)",                           // Default = ""
     id: "a-menu-id",                                    // If omitted will be calculated using text property
+    name: "radio button group",                         // Radio button group name (only applies to radio buttons)
     placeholder: "Nothing to see here",                 // Placeholder text to show if a sub-menu has no items (default = "No items")
-    role: "menuitem|menuitemcheckbox|menuitemradio",    // Default = "menuitem"
+    role: "menuitem|menuitemcheckbox|menuitemradio",    // Menu item's role. One of "menuitem", "menuitemcheckbox" or "menuitemradio". Default = "menuitem"
     shortcut: "[c a d m] X|Fnn",                        // Keyboard shortcut, where c a d m represent optional modifier keys, X is an alphanumeric character and Fnn a function key number e.g. F12
     text: "some menu display text"                      // MANDATORY
  }
@@ -256,10 +257,10 @@ Returns the current state of the item as an object.  Here's an example:
 ```javascript
 {
     align: "left",
-    checked: true,              // Checkbox or radio button items only
+    checked: true,              // Returned for checkbox or radio button items only
     className: "",
     disabled: true,
-    icon: null,
+    icon: "",
     id: "a-menu-item-id",
     menu: 1,
     name: "my-group",           // Name of the radio button group (radio button items only)
@@ -267,6 +268,31 @@ Returns the current state of the item as an object.  Here's an example:
     role: "menuitemcheckbox",
     shortcut: "s t"
  }
+```
+___
+
+```javascript
+getGroupChecked(groupName)
+```
+Returns the ID of the currently checked item in the given radio group, or null if the group doesn't exist or no element is checked.
+```
+___
+
+```javascript
+insertAfter(menuId, newItems)
+```
+Inserts one or more menu items immediately after a menu item and at the same level.
+If menuID is blank or null the items will be appended to the top-level menu bar.
+'newItems' can be one or an array of strings or objects specifying the new item(s) (see `append` above for more details).
+```
+___
+
+```javascript
+insertBefore(menuId, newItems)
+```
+Inserts one or more menu items immediately after a menu item and at the same level.
+If menuID is blank or null the items will be prepended to the top-level menu bar.
+'newItems' can be one or an array of strings or objects specifying the new item(s) (see `append` above for more details).
 ```
 
 ##### Events

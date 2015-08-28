@@ -506,12 +506,12 @@ function Menu(sId, oOptions)
             align: elMenuItem.getAttribute('data-align') || 'left',
             className: elMenuItem.className,
             disabled: elMenuItem.getAttribute('aria-disabled') === 'true' || false,
-            icon: elMenuItem.getAttribute('data-icon') || null,
+            icon: elMenuItem.getAttribute('data-icon') || "",
             id: sMenuId,
             menu: _id,
             placeholder: elMenuItem.getAttribute('data-placeholder') || _oOptions.defaultPlaceholder,
-            shortcut: elMenuItem.getAttribute('data-shortcut') || null,
-            role: elMenuItem.getAttribute('role') || null
+            shortcut: elMenuItem.getAttribute('data-shortcut') || "",
+            role: elMenuItem.getAttribute('role') || "menuitem"
         };
 
         // Add a checked property for a checkbox or radio button item
@@ -521,7 +521,7 @@ function Menu(sId, oOptions)
 
         // Add a name property for a radio button item
         if (oState.role === 'menuitemradio') {
-            oState.name = elMenuItem.getAttribute('name') || null;
+            oState.name = elMenuItem.getAttribute('name') || "";
         }
 
         return oState;
@@ -529,7 +529,7 @@ function Menu(sId, oOptions)
 
 
     /**
-     * Returns the currently checked item in the given radio group, or null if the group doesn't exist or no element is checked.
+     * Returns the ID of the currently checked item in the given radio group, or null if the group doesn't exist or no element is checked.
      * @param sName Name of the radio group to inspect.
      * @return {string} ID of the checked menu item.
      */
@@ -541,7 +541,7 @@ function Menu(sId, oOptions)
 
 
     /**
-     * Inserts one ot more menu items immediately after the menu item with the given ID.
+     * Inserts one or more menu items immediately after the menu item with the given ID.
      * @param sBaseMenuId string ID of the menu item to insert items after.
      * @param mNewItems array|object|string A set of new items to be inserted.
      */
