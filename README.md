@@ -261,7 +261,7 @@ Returns the current state of the item as an object.  Here's an example:
     icon: null
     id: "a-menu-item-id"
     menu: 1
-    name: "my-group""           // Name of the radio button group (radio button items only)
+    name: "my-group"           // Name of the radio button group (radio button items only)
     placeholder: null
     role: "menuitemcheckbox"
     shortcut: "s t"
