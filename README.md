@@ -229,8 +229,9 @@ In this case the menu will be an enabled, default (action) menu with no icon who
 {
     align: "right|left",                                // Align item to the right-hand side of the menubar (only applies to top-level items). Default = "left"
     checked: true|false,                                // Default = false
+    className: "a-custom-class",                        // Adds a custom class name to the item. Default = ""
     disabled: true|false,                               // Default = false
-    icon: "class(className)",                           // Default = <blank>
+    icon: "class(className)",                           // Default = ""
     id: "a-menu-id",                                    // If omitted will be calculated using text property
     placeholder: "Nothing to see here",                 // Placeholder text to show if a sub-menu has no items (default = "No items")
     role: "menuitem|menuitemcheckbox|menuitemradio",    // Default = "menuitem"
@@ -245,6 +246,26 @@ ___
 clear(menuId, removeSubMenu)
 ```
 Empties an item's sub-menu and (if `removeSubMenu` is `true`) removes the sub-menu entirely.
+___
 
+```javascript
+get(menuId)
+```
+Returns the current state of the item as an object.  Here's an example:
+```javascript
+{
+    align: "left"
+    checked: true               // Checkbox or radio button items only
+    className: ""
+    disabled: true
+    icon: null
+    id: "a-menu-item-id"
+    menu: 1
+    name: "my-group""           // Name of the radio button group (radio button items only)
+    placeholder: null
+    role: "menuitemcheckbox"
+    shortcut: "s t"
+ }
+```
 
 ##### Events
