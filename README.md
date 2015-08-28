@@ -211,7 +211,7 @@ Menus can be created and manipulated in JavaScript using the following API:
 addEventListener(eventType, callback)
 ```
 Similar to the DOM event.  Listens for an `eventType` event and runs the `callback` function when the event is triggered.
-See the Events section later for details.
+See the Events section later for information about the events triggered by the widget.
 ___
 
 ```javascript
@@ -282,7 +282,7 @@ insertAfter(menuId, newItems)
 ```
 Inserts one or more menu items immediately after a menu item and at the same level.
 If menuID is blank or null the items will be appended to the top-level menu bar.
-'newItems' can be one or an array of strings or objects specifying the new item(s) (see `append` above for more details).
+`newItems` can be one or an array of strings or objects specifying the new item(s) (see `append` above for more details).
 ___
 
 ```javascript
@@ -290,6 +290,38 @@ insertBefore(menuId, newItems)
 ```
 Inserts one or more menu items immediately before a menu item and at the same level.
 If menuID is blank or null the items will be prepended to the top-level menu bar.
-'newItems' can be one or an array of strings or objects specifying the new item(s) (see `append` above for more details).
+`newItems` can be one or an array of strings or objects specifying the new item(s) (see `append` above for more details).
+___
+
+```javascript
+prepend(menuId, newItems)
+```
+Prepends one or more item(s) to a sub-menu attached to a menu item.
+Will automatically create a new sub-menu if one does not yet exist.
+Converts the menu item to a sub-menu style (with an arrow affordance), overriding any existing checkbox or radio button attributes.
+___
+
+```javascript
+remove(menuId)
+```
+Completely removes the given menu item (and any child sub-menus contained within it).
+___
+
+```javascript
+removeEventListener(eventType, callback)
+```
+Similar to the DOM event.  Removes callback `callback` from the `eventType` event's listener chain.
+
+```javascript
+replace(menuId, newItems)
+```
+Completely replaces any sub-menu (and any child sub-menus) associated with the menu item with the new item(s).
+The menu item itself is *not* removed - to do that use the `remove` method.
+
+```javascript
+set(menuId, newProperties)
+```
+Sets properties for the given menu item, where `newProperties` is a JavaScript object specifying the properties to be changed.
+For details of the properties that can be set see the `get` method above.
 
 ##### Events

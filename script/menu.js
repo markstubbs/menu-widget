@@ -674,25 +674,25 @@ function Menu(sId, oOptions)
 
 
     /**
-     * Sets attributes directly on the given menu item.
+     * Sets properties for the given menu item.
      * @param sMenuId string ID of the menu item whose properties are to be set.
-     * @param oNewItems object Set of properties.
+     * @param oNewProperties object Set of properties.
      */
-    self.set = function (sMenuId, oNewItems)
+    self.set = function (sMenuId, oNewProperties)
     {
         var elMenuItem = document.getElementById(sMenuId);
-        if (elMenuItem && typeof oNewItems === 'object') {
-            Object.keys(oNewItems).forEach(function (sKey) {
+        if (elMenuItem && typeof oNewProperties === 'object') {
+            Object.keys(oNewProperties).forEach(function (sKey) {
                 switch (sKey) {
                     case 'text':
-                        elMenuItem.textContent = oNewItems.text;
+                        elMenuItem.textContent = oNewProperties.text;
                         break;
                     case 'className':
                         // Append rather than set as the menu widget needs certain classes to work properly
-                        elMenuItem.classList.add(oNewItems.className);
+                        elMenuItem.classList.add(oNewProperties.className);
                         break;
                     case 'disabled':
-                        if (oNewItems.disabled) {
+                        if (oNewProperties.disabled) {
                             elMenuItem.setAttribute('aria-disabled', 'true');
                         } else {
                             elMenuItem.removeAttribute('aria-disabled');
@@ -700,11 +700,11 @@ function Menu(sId, oOptions)
                         break;
                     case 'role':
                     case 'name':
-                        elMenuItem.setAttribute(sKey, oNewItems[sKey]);
+                        elMenuItem.setAttribute(sKey, oNewProperties[sKey]);
                         break;
                     case 'checked':
                         var sRole = elMenuItem.getAttribute('role');
-                        if (oNewItems.checked) {
+                        if (oNewProperties.checked) {
                             if (sRole === 'menuitemcheckbox') {
                                 elMenuItem.setAttribute('aria-checked', 'true');
                             } else if (sRole === 'menuitemradio') {
@@ -718,7 +718,7 @@ function Menu(sId, oOptions)
                     case 'icon':
                     case 'placeholder':
                     case 'shortcut':
-                        elMenuItem.setAttribute('data-' + sKey, oNewItems[sKey]);
+                        elMenuItem.setAttribute('data-' + sKey, oNewProperties[sKey]);
                 }
             });
             _decorateItem(elMenuItem);
