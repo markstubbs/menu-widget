@@ -226,12 +226,14 @@ In this case the menu will be a default (action) menu with no icon whose ID is c
 * An object describing the new menu item:
 ```javascript
 {
-    id: "<i>menu-id</i>",
-    text: "menu display text",
-    role: "menuitem|menuitemcheckbox|menuitemradio",
+    text: "some menu display text",
+    id: "a-menu-id",                                    // If omitted will be calculated using the text property
+    role: "menuitem|menuitemcheckbox|menuitemradio",    // default = "menuitem"
+    checked: true|false,                                // default = false
+    disabled: true|false,                               // default = false
 }
 ```
-All properties are optional.
+All properties except `text` are optional.
 ___
 
 ```javascript
