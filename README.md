@@ -190,12 +190,16 @@ var menu = new Menu('menu', {
 ```
 
 
-##### Static menu attributes
+##### HTML menu attributes
 
-The following attributes may be assigned to static menu `<li>`s defined in HTML:
+The following attributes may be assigned to static menu `<li>`s defined via HTML:
 
 | Attribute | Default Value | Description
-| ------ | ------- | -----------
+| ---------- | ------- | -----------
+| `aria-checked` | `false`  | When `true` a checkbox or radio button menu item is marked as selected.
+| `aria-disabled` | `false`  | When `true` a menu item is disabled and grayed out.  Disabled items will not fire `select` events.
+| `data-icon` | `<blank>`  | Specifies a class to be added to the menu item's icon element.  Syntax: `class(`*`className`*`)`
+| `data-shortcut` | `<blank>`  | Defines a keyboard shortcut for the menu item. May include a space-separated list of modifier key characters (`c`- Ctrl, `a` - Alt, `s` - Shift and `m` - Meta). Specifying a shortcut of `c a A` would trigger the menu item's `select` event by pressing the `Ctrl+Alt+a` keys simultaneously.
 | `role` | `menuitem`  | `menuitem` A simple action menu item.<br>`menuitemcheckbox` Defines a checkbox that can be toggled on/off.<br>`menuitemradio` Creates a menu item that represents one of a group of related options.  Only one option in the group can be selected at a time. When 'on' a blob is shown next to the menu item.
 
 ##### JavaScript API
