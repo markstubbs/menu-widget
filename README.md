@@ -133,7 +133,7 @@ Menu action items are defined by adding `<li>`s to the list.
 Sub-menus are created by simply nesting `<ul>`s inside `<li>`s as shown in the example.
 
 Menu item properties are specified using a combination of ARIA roles and HTML `data-*` attributes on the `<li>` tag.
-See the Reference section later for details.
+See the Reference section below for details.
 
 Notes about the example:
 * Action 1 has a `data-icon` that specifies a class to be added to its `:before` pseudo-element.
@@ -165,7 +165,7 @@ All events triggered by the widget include the ID of the selected item in the `d
 
 *Disabled items and items containing sub-menus never generate `select` events.*
 
-See the Reference section later for more details.
+See the Reference section below for more details.
 
 ## Reference
 
@@ -211,7 +211,7 @@ Menus can be created and manipulated in JavaScript using the following API:
 addEventListener(eventType, callback)
 ```
 Similar to the DOM event.  Listens for an `eventType` event and runs the `callback` function when the event is triggered.
-See the Events section later for information about the events triggered by the widget.
+See the Events section below for information about the events triggered by the widget.
 ___
 
 ```javascript
@@ -325,3 +325,30 @@ Sets properties for the given menu item, where `newProperties` is a JavaScript o
 For details of the properties that can be set see the `get` method above.
 
 ##### Events
+
+Three events are provided to allow you to respond to user interaction:
+
+###### enter
+
+Called when the user enters a menu item.  An item is entered when:
+* Hovering over it with a mouse
+* Touching it on a touchscreen (will also generate a `select` event)
+* Navigating to an item using the keyboard
+
+###### leave
+
+Called when the user leaves a menu item.  An item is left when:
+* The mouse pointer leaves the item.
+* Another item (or anywhere outside the menu widget) is touched.
+* Navigating to another item using the keyboard
+* Hitting the `Esc` key to close the menu.
+
+###### select
+
+Called when the user selects a menu item.  An item can be selected by:
+* Clicking on it with a mouse
+* Touching it on a touchscreen
+* Navigating to an item using the keyboard and then hitting the `Enter` key or `spacebar`
+* Invoking the menu's keyboard shortcut (when specified)
+
+*NOTE: Only enabled action (i.e. role=`menuitem`) items will trigger `select` events.*

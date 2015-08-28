@@ -1057,6 +1057,7 @@ function Menu(sId, oOptions)
         for (var i = 0; i < cActiveElements.length; i++) {
             cActiveElements[i].classList.remove(_oOptions.prefix + '-active');
         }
+        self.dispatchEvent('leave', elMenu.id);
     }
 
 
@@ -1433,6 +1434,7 @@ function Menu(sId, oOptions)
                 // Don't deactivate the top-level menu item while navigating within it
                 if (_elCurrentActiveItem.parentNode !== _elRootMenu) {
                     _elCurrentActiveItem.classList.remove(_oOptions.prefix + '-active');
+                    self.dispatchEvent('leave', _elCurrentActiveItem.id);
                 }
                 elNextItem.classList.add(_oOptions.prefix + '-active');
                 self.dispatchEvent('enter', elNextItem.id);
