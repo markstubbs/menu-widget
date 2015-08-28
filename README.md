@@ -253,7 +253,7 @@ ___
 ```javascript
 get(menuId)
 ```
-Returns the current state of the item as an object.  Here's an example:
+Returns the current properties of the menu item as an object.  Here's an example:
 ```javascript
 {
     align: "left",
