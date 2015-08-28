@@ -224,6 +224,9 @@
         hotkey: { keycode: 77, modifiers: { c: true, a: false, m: false, s: false } } // Ctrl M
     });
 
+    // Test - get menu item state
+    console.log(oMenu1.get('menu-item-i-am-a-disabled-checkbox'));
+
     // Test - remove sub-menu items
     oMenu1.clear('menu-item-action-1');
     oMenu1.clear('menu-item-action-a', true);

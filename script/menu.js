@@ -12,7 +12,7 @@ Menu.shortcuts = [];
 
 function Menu(sId, oOptions)
 {
-    var _this = this;
+    var self = this;
     var _id = null;
     var _elContainer;
     var _elRootMenu;
@@ -31,7 +31,8 @@ function Menu(sId, oOptions)
         popupDelay: 300,
         menuActiveDuration: 120,
         hotkey: null,
-        skipDisabledItems: true
+        skipDisabledItems: true,
+        defaultPlaceholder: 'No items'
     };
 
     document.documentElement.classList.add(platform.os.family.toLowerCase().replace(/\W+/g, '-'));
@@ -197,7 +198,7 @@ function Menu(sId, oOptions)
         if (e.target.getAttribute('aria-disabled') !== 'true' && e.target.getAttribute('role') !== 'separator') {
             if (_elRootMenu.classList.contains(_oOptions.prefix + '-focus') && e.target.nodeName === 'LI') {
 
-                 _this.dispatchEvent('enter', e.target.id);
+                 self.dispatchEvent('enter', e.target.id);
                 _elCurrentActiveItem = e.target;
 
                 // Clear currently active menu chain
@@ -241,7 +242,7 @@ function Menu(sId, oOptions)
                 e.target.classList.remove(_oOptions.prefix + '-active');
             }
             if (e.target.getAttribute('aria-disabled') !== 'true' && e.target.getAttribute('role') !== 'separator') {
-                _this.dispatchEvent('leave', e.target.id);
+                self.dispatchEvent('leave', e.target.id);
             }
         }
         e.stopPropagation();
@@ -276,9 +277,9 @@ function Menu(sId, oOptions)
                     // Top-level item is active
                     _clearAllMenus(_elRootMenu);
                     _elCurrentActiveItem = elTouched;
-                    _this.dispatchEvent('enter', elTouched.id);
+                    self.dispatchEvent('enter', elTouched.id);
                     if (!bHasSubMenu) {
-                        _this.dispatchEvent('select', elTouched.id);
+                        self.dispatchEvent('select', elTouched.id);
                     }
                     _openSubMenu(e.target, 1);
                     if (!bHasSubMenu) {
@@ -289,7 +290,7 @@ function Menu(sId, oOptions)
                 } else {
                     // Top-level item is inactive
                     if (!bHasSubMenu) {
-                        _this.dispatchEvent('select', elTouched.id);
+                        self.dispatchEvent('select', elTouched.id);
                     }
                     _clearAllMenus();
                 }
@@ -305,7 +306,7 @@ function Menu(sId, oOptions)
                         _setRadio(elTouched);
                     }
                     // This is an action item i.e. no sub-menu
-                    _this.dispatchEvent('select', elTouched.id);
+                    self.dispatchEvent('select', elTouched.id);
                     _clearAllMenus();
                 }
             }
@@ -347,9 +348,9 @@ function Menu(sId, oOptions)
                     // Top-level item is active
                     _clearAllMenus(_elRootMenu);
                     _elCurrentActiveItem = elClicked;
-                    _this.dispatchEvent('enter', elClicked.id);
+                    self.dispatchEvent('enter', elClicked.id);
                     if (!bHasSubMenu) {
-                        _this.dispatchEvent('select', elClicked.id);
+                        self.dispatchEvent('select', elClicked.id);
                     }
                     _openSubMenu(e.target, 1);
                     if (!bHasSubMenu) {
@@ -360,7 +361,7 @@ function Menu(sId, oOptions)
                 } else {
                     // Top-level item is inactive
                     if (!bHasSubMenu) {
-                        _this.dispatchEvent('select', elClicked.id);
+                        self.dispatchEvent('select', elClicked.id);
                     }
                     _clearAllMenus();
                 }
@@ -375,7 +376,7 @@ function Menu(sId, oOptions)
                         _setRadio(elClicked);
                     }
                     // This is an action item i.e. no sub-menu
-                    _this.dispatchEvent('select', elClicked.id);
+                    self.dispatchEvent('select', elClicked.id);
                     _clearAllMenus();
                 }
             }
@@ -405,11 +406,146 @@ function Menu(sId, oOptions)
      */
 
     /**
+     * Emulates the DOM addEventListener method (except that useCapture is not supported).
+     * @param {string} sEventType Type (name) of the event to listen for.
+     * @param {function} fnCallback Callback method to be invoked when the event is dispatched.
+     */
+    self.addEventListener = function (sEventType, fnCallback)
+    {
+        _oListeners[sEventType] = _oListeners[sEventType] || [];
+        if (_oListeners[sEventType].indexOf(fnCallback) === -1) {
+            _oListeners[sEventType].push(fnCallback);
+        }
+        return fnCallback;
+    };
+
+
+    /**
+     * Appends one ot more items to the menu item with the given ID.
+     * @param sBaseMenuId string ID of the menu item to append items to.
+     * @param mNewItems array|object|string Set of additional items.
+     */
+    self.append = function (sBaseMenuId, mNewItems)
+    {
+        var elBaseItem;
+        if (sBaseMenuId) {
+            // Fetch the base menu item element
+            elBaseItem = document.getElementById(sBaseMenuId)
+        }
+        if (elBaseItem) {
+            _insert(elBaseItem, mNewItems, 'APPEND');
+        }
+    };
+
+
+    /**
+     * Empties an item's sub-menu and (optionally) removes the sub-menu entirely.
+     * @param sMenuId string ID of the menu item to be cleared.
+     * @param bRemoveList bool If true (default=false) removes the entire sub-menu (item becomes a clickable action)
+     */
+    self.clear = function (sMenuId, bRemoveList)
+    {
+        if (sMenuId) {
+            var elMenuItem = document.getElementById(sMenuId);
+            if (elMenuItem && elMenuItem.children.length) {
+                var elSubMenu = elMenuItem.children[0];
+                if (bRemoveList) {
+                    elMenuItem.removeChild(elSubMenu);
+                } else {
+                    while (elSubMenu.firstChild) {
+                        elSubMenu.removeChild(elSubMenu.firstChild);
+                    }
+                    elSubMenu.appendChild(_createPlaceholderItem(elMenuItem.getAttribute('data-placeholder')));
+                }
+                _decorateItem(elMenuItem);
+            }
+        }
+    };
+
+
+    /**
+     * Dispatches the given custom event to all registered listeners.
+     * @param {string} sEventType String identifying the event type (i.e name).
+     * @param {object} [oEventArgs] Object describing any event arguments.
+     */
+    self.dispatchEvent = function (sEventType, oEventArgs)
+    {
+        var oEvent;
+
+        try {
+            // Standards-based method
+            //noinspection JSCheckFunctionSignatures
+            oEvent = new CustomEvent(sEventType, {detail: oEventArgs} || {});
+        }
+        catch(e)  {
+            // In IE 8+ (8 with polyfill) and Mobile Safari we need to dispatch the event differently
+            oEvent = document.createEvent('CustomEvent');
+            oEvent.initCustomEvent(sEventType, false, false, oEventArgs);
+        }
+
+        if (typeof _oListeners[oEvent.type] !== 'undefined') {
+            for (var c = 0; c < _oListeners[oEvent.type].length; c++) {
+                _oListeners[oEvent.type][c].call(this, oEvent);
+            }
+        }
+    };
+
+
+    /**
+     * Returns the current state of the given menu.
+     * @param sMenuId string ID of the menu item to be inspected.
+     * @return {{}} Object indicating the menu item's state
+     */
+    self.get = function (sMenuId)
+    {
+        var elMenuItem = document.getElementById(sMenuId);
+        if (!elMenuItem) {
+            return {};
+        }
+        var oState = {
+            align: elMenuItem.getAttribute('data-align') || 'left',
+            className: elMenuItem.className,
+            disabled: elMenuItem.getAttribute('aria-disabled') === 'true' || false,
+            icon: elMenuItem.getAttribute('data-icon') || null,
+            id: sMenuId,
+            menu: _id,
+            placeholder: elMenuItem.getAttribute('data-placeholder') || _oOptions.defaultPlaceholder,
+            shortcut: elMenuItem.getAttribute('data-shortcut') || null,
+            role: elMenuItem.getAttribute('role') || null
+        };
+
+        // Add a checked property for a checkbox or radio button item
+        if (oState.role === 'menuitemcheckbox' || oState.role === 'menuitemradio') {
+            oState.checked = elMenuItem.getAttribute('aria-checked') === 'true' || false;
+        }
+
+        // Add a name property for a radio button item
+        if (oState.role === 'menuitemradio') {
+            oState.name = elMenuItem.getAttribute('name') || null;
+        }
+
+        return oState;
+    };
+
+
+    /**
+     * Returns the currently checked item in the given radio group, or null if the group doesn't exist or no element is checked.
+     * @param sName Name of the radio group to inspect.
+     * @return {string} ID of the checked menu item.
+     */
+    self.getGroupChecked = function (sName)
+    {
+        var elChecked = _elRootMenu.querySelector('li[name="' + sName + '"][aria-checked="true"]');
+        return elChecked ? elChecked.id : null;
+    };
+
+
+    /**
      * Inserts one ot more menu items immediately after the menu item with the given ID.
      * @param sBaseMenuId string ID of the menu item to insert items after.
      * @param mNewItems array|object|string A set of new items to be inserted.
      */
-    _this.insertAfter = function (sBaseMenuId, mNewItems)
+    self.insertAfter = function (sBaseMenuId, mNewItems)
     {
         var elBaseItem;
         var elTempSubMenuItem;
@@ -445,7 +581,7 @@ function Menu(sId, oOptions)
      * @param sBaseMenuId string ID of the menu item to insert items before.
      * @param mNewItems array|object|string A set of new items to be inserted.
      */
-    _this.insertBefore = function (sBaseMenuId, mNewItems)
+    self.insertBefore = function (sBaseMenuId, mNewItems)
     {
         var elBaseItem;
         var elTempSubMenuItem;
@@ -479,29 +615,11 @@ function Menu(sId, oOptions)
 
 
     /**
-     * Appends one ot more items to the menu item with the given ID.
-     * @param sBaseMenuId string ID of the menu item to append items to.
-     * @param mNewItems array|object|string Set of additional items.
-     */
-    _this.append = function (sBaseMenuId, mNewItems)
-    {
-        var elBaseItem;
-        if (sBaseMenuId) {
-            // Fetch the base menu item element
-            elBaseItem = document.getElementById(sBaseMenuId)
-        }
-        if (elBaseItem) {
-            _insert(elBaseItem, mNewItems, 'APPEND');
-        }
-    };
-
-
-    /**
      * Prepends one ot more items to the menu item with the given ID.
      * @param sBaseMenuId string ID of the menu item to prepend items to.
      * @param mNewItems array|object|string Set of additional items.
      */
-    _this.prepend = function (sBaseMenuId, mNewItems)
+    self.prepend = function (sBaseMenuId, mNewItems)
     {
         var elBaseItem;
         if (sBaseMenuId) {
@@ -515,22 +633,10 @@ function Menu(sId, oOptions)
 
 
     /**
-     * Replaces the given menu item's sub-menu with the given items.
-     * @param sBaseMenuId string ID of the menu item whose items are to be replaced.
-     * @param mNewItems array|object|string Set of new items.
-     */
-    _this.replace = function (sBaseMenuId, mNewItems)
-    {
-        _this.clear(sBaseMenuId);
-        _this.append(sBaseMenuId, mNewItems);
-    };
-
-
-    /**
      * Removes the given menu item (and any children).
      * @param sMenuId string ID of the menu item to be removed.
      */
-    _this.remove = function (sMenuId)
+    self.remove = function (sMenuId)
     {
         var elMenuItem = document.getElementById(sMenuId);
         if (elMenuItem) {
@@ -540,11 +646,39 @@ function Menu(sId, oOptions)
 
 
     /**
+     * Removes the given callback function from the list of listeners.
+     * @param {string} sEventType Type (name) of the event to listen for.
+     * @param {function} fnCallback Callback method to be removed.
+     */
+    self.removeEventListener = function (sEventType, fnCallback)
+    {
+        if (typeof _oListeners[sEventType] !== 'undefined') {
+            var iRemove = _oListeners[sEventType].indexOf(fnCallback);
+            if (iRemove !== -1) {
+                _oListeners[sEventType].splice(iRemove, 1)
+            }
+        }
+    };
+
+
+    /**
+     * Replaces the given menu item's sub-menu with the given items.
+     * @param sBaseMenuId string ID of the menu item whose items are to be replaced.
+     * @param mNewItems array|object|string Set of new items.
+     */
+    self.replace = function (sBaseMenuId, mNewItems)
+    {
+        self.clear(sBaseMenuId);
+        self.append(sBaseMenuId, mNewItems);
+    };
+
+
+    /**
      * Sets attributes directly on the given menu item.
      * @param sMenuId string ID of the menu item whose properties are to be set.
      * @param oNewItems object Set of properties.
      */
-    _this.set = function (sMenuId, oNewItems)
+    self.set = function (sMenuId, oNewItems)
     {
         var elMenuItem = document.getElementById(sMenuId);
         if (elMenuItem && typeof oNewItems === 'object') {
@@ -588,139 +722,6 @@ function Menu(sId, oOptions)
                 }
             });
             _decorateItem(elMenuItem);
-        }
-    };
-
-
-    /**
-     * Returns the current state of the given menu.
-     * @param sMenuId string ID of the menu item to be inspected.
-     * @return {{}} Object indicating the menu item's state
-     */
-    _this.get = function (sMenuId)
-    {
-        var elMenuItem = document.getElementById(sMenuId);
-        if (!elMenuItem) {
-            return {};
-        }
-        var oState = {
-            align: elMenuItem.getAttribute('data-align') || 'left',
-            className: elMenuItem.className,
-            disabled: elMenuItem.getAttribute('aria-disabled') || false,
-            icon: elMenuItem.getAttribute('data-icon') || null,
-            id: sMenuId,
-            menu: _id,
-            placeholder: elMenuItem.getAttribute('data-placeholder') || null,
-            shortcut: elMenuItem.getAttribute('data-shortcut') || null,
-            role: elMenuItem.getAttribute('role') || null
-        };
-
-        // Add a checked property for a checkbox or radio button item
-        if (oState.role === 'menuitemcheckbox' || oState.role === 'menuitemradio') {
-            oState.checked = elMenuItem.getAttribute('aria-checked') || false;
-        }
-
-        // Add a name property for a radio button item
-        if (oState.role === 'menuitemradio') {
-            oState.name = elMenuItem.getAttribute('name') || null;
-        }
-
-        return oState;
-    };
-
-
-    /**
-     * Returns the currently checked item in the given radio group, or null if the group doesn't exist or no element is checked.
-     * @param sName Name of the radio group to inspect.
-     * @return {string} ID of the checked menu item.
-     */
-    _this.getGroupChecked = function (sName)
-    {
-        var elChecked = _elRootMenu.querySelector('li[name="' + sName + '"][aria-checked="true"]');
-        return elChecked ? elChecked.id : null;
-    };
-
-
-    /**
-     * Empties an item's sub-menu and (optionally) removes the sub-menu entirely.
-     * @param sMenuId string ID of the menu item to be cleared.
-     * @param bRemoveList bool If true (default=false) removes the entire sub-menu (item becomes a clickable action)
-     */
-    _this.clear = function (sMenuId, bRemoveList)
-    {
-        if (sMenuId) {
-            var elMenuItem = document.getElementById(sMenuId);
-            if (elMenuItem && elMenuItem.children.length) {
-                var elSubMenu = elMenuItem.children[0];
-                if (bRemoveList) {
-                    elMenuItem.removeChild(elSubMenu);
-                } else {
-                    while (elSubMenu.firstChild) {
-                        elSubMenu.removeChild(elSubMenu.firstChild);
-                    }
-                    elSubMenu.appendChild(_createPlaceholderItem(elMenuItem.getAttribute('data-placeholder')));
-                }
-                _decorateItem(elMenuItem);
-            }
-        }
-    };
-
-
-    /**
-     * Emulates the DOM addEventListener method (except that useCapture is not supported).
-     * @param {string} sEventType Type (name) of the event to listen for.
-     * @param {function} fnCallback Callback method to be invoked when the event is dispatched.
-     */
-    _this.addEventListener = function (sEventType, fnCallback)
-    {
-        _oListeners[sEventType] = _oListeners[sEventType] || [];
-        if (_oListeners[sEventType].indexOf(fnCallback) === -1) {
-            _oListeners[sEventType].push(fnCallback);
-        }
-        return fnCallback;
-    };
-
-
-    /**
-     * Removes the given callback function from the list of listeners.
-     * @param {string} sEventType Type (name) of the event to listen for.
-     * @param {function} fnCallback Callback method to be removed.
-     */
-    _this.removeEventListener = function (sEventType, fnCallback)
-    {
-        if (typeof _oListeners[sEventType] !== 'undefined') {
-            var iRemove = _oListeners[sEventType].indexOf(fnCallback);
-            if (iRemove !== -1) {
-                _oListeners[sEventType].splice(iRemove, 1)
-            }
-        }
-    };
-
-
-    /**
-     * Dispatches the given custom event to all registered listeners.
-     * @param {string} sEventType String identifying the event type (i.e name).
-     * @param {object} [oEventArgs] Object describing any event arguments.
-     */
-    _this.dispatchEvent = function (sEventType, oEventArgs)
-    {
-        var oEvent;
-
-        try {
-            // Standards-based method
-            //noinspection JSCheckFunctionSignatures
-            oEvent = new CustomEvent(sEventType, {detail: oEventArgs} || {});
-        }
-        catch(e)  {
-            // In IE 8+ (8 with polyfill) and Mobile Safari we need to dispatch the event differently
-            oEvent = document.createEvent('CustomEvent');
-            oEvent.initCustomEvent(sEventType, false, false, oEventArgs);
-        }
-
-        if (typeof _oListeners[oEvent.type] !== 'undefined') {
-            for (var c = 0; c < _oListeners[oEvent.type].length; c++) {
-                _oListeners[oEvent.type][c].call(this, oEvent);
-            }
         }
     };
 
@@ -1025,7 +1026,7 @@ function Menu(sId, oOptions)
         // Open the sub menu related to this top-level menu item if it's enabled
         if (elParentMenu.children.length) {
             elParentMenu.children[0].classList.add(_oOptions.prefix + '-open-' + iLevel);
-            _this.dispatchEvent('opened', elParentMenu.id);
+            self.dispatchEvent('opened', elParentMenu.id);
 
             // If required activate the first applicable item
             if (bActivate) {
@@ -1036,7 +1037,7 @@ function Menu(sId, oOptions)
                 }
                 if (elNextItem) {
                     elNextItem.classList.add(_oOptions.prefix + '-active');
-                    _this.dispatchEvent('enter', elNextItem.id);
+                    self.dispatchEvent('enter', elNextItem.id);
                     _elCurrentActiveItem = elNextItem;
                 }
             }
@@ -1060,7 +1061,7 @@ function Menu(sId, oOptions)
 
 
     // Set the width of sub-menus
-    _this.addEventListener('opened', function(e) {
+    self.addEventListener('opened', function(e) {
         var elMenuItem = document.getElementById(e.detail);
         // Does this menu item contain a sub-menu?
         if (elMenuItem && elMenuItem.nodeName === 'LI' && elMenuItem.children.length) {
@@ -1090,7 +1091,7 @@ function Menu(sId, oOptions)
     {
         var elPlaceholder = document.createElement('li');
         elPlaceholder.className = _oOptions.prefix + '-placeholder';
-        elPlaceholder.textContent = sPlaceholderText || 'No items';
+        elPlaceholder.textContent = sPlaceholderText || _oOptions.defaultPlaceholder;
         elPlaceholder.setAttribute('aria-disabled', 'true');
         return elPlaceholder;
     }
@@ -1140,7 +1141,7 @@ function Menu(sId, oOptions)
 
         // Trigger a leave event if required
         if (_elCurrentActiveItem && elExclude !== _elCurrentActiveItem) {
-            _this.dispatchEvent('leave', _elCurrentActiveItem.id);
+            self.dispatchEvent('leave', _elCurrentActiveItem.id);
         }
 
         _elCurrentActiveItem = elExclude;
@@ -1176,7 +1177,7 @@ function Menu(sId, oOptions)
                     _setRadio(elMenuItem);
                 }
                 elMenuItem.classList.add(_oOptions.prefix + '-active');
-                _this.dispatchEvent('select', elMenuItem.id);
+                self.dispatchEvent('select', elMenuItem.id);
                 setTimeout(function() { elMenuItem.classList.remove(_oOptions.prefix + '-active'); }, _oOptions.menuActiveDuration);
                 e.stopPropagation();
                 e.preventDefault();
@@ -1298,7 +1299,7 @@ function Menu(sId, oOptions)
                         } else if (sRole === 'menuitemradio') {
                             _setRadio(_elCurrentActiveItem);
                         }
-                        _this.dispatchEvent('select', _elCurrentActiveItem.id);
+                        self.dispatchEvent('select', _elCurrentActiveItem.id);
                         _clearAllMenus();
                     } else {
                         // Handle sub-menu items
@@ -1336,7 +1337,7 @@ function Menu(sId, oOptions)
                     if (elActiveTopMenu !== elNextItem) {
                         _deactivateMenu(elActiveTopMenu);
                         elNextItem.classList.add(_oOptions.prefix + '-active');
-                        _this.dispatchEvent('enter', elNextItem.id);
+                        self.dispatchEvent('enter', elNextItem.id);
                         _openSubMenu(elNextItem, 1);
                         _elCurrentActiveItem = elNextItem;
                     }
@@ -1370,7 +1371,7 @@ function Menu(sId, oOptions)
                     if (elActiveTopMenu !== elNextItem) {
                         _deactivateMenu(elActiveTopMenu);
                         elNextItem.classList.add(_oOptions.prefix + '-active');
-                        _this.dispatchEvent('enter', elNextItem.id);
+                        self.dispatchEvent('enter', elNextItem.id);
                         _openSubMenu(elNextItem, 1);
                         _elCurrentActiveItem = elNextItem;
                     }
@@ -1434,7 +1435,7 @@ function Menu(sId, oOptions)
                     _elCurrentActiveItem.classList.remove(_oOptions.prefix + '-active');
                 }
                 elNextItem.classList.add(_oOptions.prefix + '-active');
-                _this.dispatchEvent('enter', elNextItem.id);
+                self.dispatchEvent('enter', elNextItem.id);
                 _elCurrentActiveItem = elNextItem;
             }
         }
