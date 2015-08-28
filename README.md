@@ -205,7 +205,7 @@ The following attributes may be assigned to static menu `<li>`s defined via HTML
 
 ##### JavaScript API
 
-Menus can be created and manipulated in JavaScript using the following API. All API calls expect the first parameter to be the HTML `id` of a menu item.
+Menus can be created and manipulated in JavaScript using the following API.
 
 ```javascript
 addEventListener(eventType, callback)
