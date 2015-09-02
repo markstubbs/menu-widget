@@ -325,6 +325,7 @@ set(menuId, newProperties)
 ```
 Sets properties for the given menu item, where `newProperties` is a JavaScript object specifying the properties to be changed.
 For details of the properties that can be set see the `get` method above.
+___
 
 ##### Events
 
