@@ -206,7 +206,7 @@ The following attributes may be assigned to static menu `<li>`s defined via HTML
 ##### JavaScript API
 
 Menus can be created and manipulated in JavaScript using the following API:
-
+___
 ```javascript
 addEventListener(eventType, callback)
 ```
@@ -311,12 +311,14 @@ ___
 removeEventListener(eventType, callback)
 ```
 Similar to the DOM event.  Removes callback `callback` from the `eventType` event's listener chain.
+___
 
 ```javascript
 replace(menuId, newItems)
 ```
 Completely replaces any sub-menu (and any child sub-menus) associated with the menu item with the new item(s).
 The menu item itself is *not* removed - to do that use the `remove` method.
+___
 
 ```javascript
 set(menuId, newProperties)
