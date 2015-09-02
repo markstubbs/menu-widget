@@ -341,10 +341,10 @@ Called when the user enters a menu item.  An item is entered when:
 ###### leave
 
 Called when the user leaves a menu item.  An item is left when:
-* The mouse pointer leaves the item.
-* Another item (or anywhere outside the menu widget) is touched.
+* The mouse pointer leaves the item
+* Another item (or anywhere outside the menu widget) is touched
 * Navigating to another item using the keyboard
-* Hitting the `Esc` key to close the menu.
+* Hitting the `Esc` key to close the menu
 
 ###### select
 
